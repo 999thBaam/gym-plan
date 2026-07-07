@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Weekly Cut Diet</title>
+<meta name="description" content="Weekly cut diet — tap any food for nutrition, GI index and swaps. Daily protein tracker, water counter, weigh-in log.">
+<meta name="theme-color" content="#15181B">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#EFF1EE; --card:#FAFBF9; --ink:#1F2529; --mut:#5A646E; --line:#D7DCD7;
+  --acc:#4A8757; --push:#C24E2C; --pull:#3B6BAF; --chipbg:#E4E8E3;
+  --gilow:#3E7A4C; --gimed:#A97F1F; --gihigh:#B3452F; --cheat:#A97F1F;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#15181B; --card:#1E2226; --ink:#E9ECE7; --mut:#9AA4AC; --line:#313940;
+    --acc:#6FAE7C; --push:#E06A42; --pull:#6C9BD9; --chipbg:#272C31;
+    --gilow:#71B380; --gimed:#D9A94E; --gihigh:#DB6B52; --cheat:#D9A94E;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+body{background:var(--bg); color:var(--ink); margin:0;
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  -webkit-tap-highlight-color:transparent;}
+.wrap{max-width:740px; margin:0 auto; padding:20px 14px calc(64px + env(safe-area-inset-bottom))}
+.disp{font-family:"Avenir Next Condensed","Helvetica Neue Condensed","Arial Narrow","Roboto Condensed","Helvetica Neue",sans-serif;
+  font-weight:700; text-transform:uppercase; letter-spacing:.02em; text-wrap:balance;}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums}
+a{color:inherit}
+a:focus-visible,button:focus-visible{outline:2px solid var(--pull); outline-offset:2px; border-radius:4px}
+button{font:inherit; color:inherit}
+
+.pagenav{display:flex; gap:8px; margin-bottom:14px}
+.pagenav a{flex:1; text-align:center; text-decoration:none; padding:8px 0; border-radius:6px;
+  border:1px solid var(--line); background:var(--card); font-size:14px; letter-spacing:.06em}
+.pagenav a.on{background:var(--acc); border-color:var(--acc); color:#fff}
+
+header.top h1{font-size:clamp(34px,7vw,48px); line-height:.95; margin:6px 0 6px}
+header.top .sub{color:var(--mut); font-size:14px; margin:0 0 14px}
+.meta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px}
+.meta span{font-size:12.5px; letter-spacing:.04em; text-transform:uppercase;
+  background:var(--chipbg); border:1px solid var(--line); padding:4px 10px; border-radius:3px;}
+
+/* today panel */
+.today{background:var(--card); border:1px solid var(--acc); border-radius:8px; padding:14px; margin-bottom:16px}
+.today h2{margin:0 0 2px; font-size:20px; color:var(--acc)}
+.today .tsub{color:var(--mut); font-size:13.5px; margin-bottom:10px}
+.bar{height:10px; background:var(--chipbg); border-radius:6px; overflow:hidden; margin:4px 0 2px}
+.bar i{display:block; height:100%; background:var(--acc); border-radius:6px; width:0; transition:width .3s}
+.bar.kcal i{background:var(--pull)}
+.blbl{display:flex; justify-content:space-between; font-size:12.5px; color:var(--mut)}
+.water{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; align-items:center}
+.water button{width:34px; height:42px; border-radius:6px 6px 10px 10px; border:1.5px solid var(--line);
+  background:var(--chipbg); cursor:pointer; font-size:15px}
+.water button.full{background:var(--pull); border-color:var(--pull)}
+.water .wlbl{font-size:12.5px; color:var(--mut); margin-left:4px}
+.wednote{margin-top:10px; font-size:13.5px; border-top:1px dashed var(--line); padding-top:8px}
+.wednote b{color:var(--acc)}
+
+.rules{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:14px 0 8px}
+@media (max-width:560px){ .rules{grid-template-columns:1fr} }
+.rule{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:12px 14px}
+.rule h3{margin:0 0 4px; font-size:13px; letter-spacing:.07em; color:var(--mut)}
+.rule p{margin:0; font-size:14px}
+
+nav.days{position:sticky; top:0; z-index:5; background:var(--bg); display:flex; gap:6px; overflow-x:auto;
+  padding:10px 2px; border-bottom:1px solid var(--line); margin:8px -2px 4px; -webkit-overflow-scrolling:touch;}
+nav.days a{flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:700; padding:5px 12px;
+  border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--mut); letter-spacing:.03em;}
+nav.days a.today{border-color:var(--acc); color:var(--acc)}
+
+section.day{margin-top:30px; scroll-margin-top:64px}
+.dayhead{border-left:5px solid var(--acc); padding-left:12px; margin-bottom:12px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.dayhead h2{font-size:clamp(24px,5.5vw,32px); margin:0; line-height:1; color:var(--acc)}
+.dayhead .tag{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--mut);
+  border:1px solid var(--line); border-radius:3px; padding:2px 8px; background:var(--chipbg)}
+.dayhead .tot{margin-left:auto; font-size:13px; color:var(--mut); white-space:nowrap}
+section.day.cheatday .dayhead{border-color:var(--cheat)}
+section.day.cheatday .dayhead h2{color:var(--cheat)}
+
+.meal{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:10px}
+.mrow{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+.mtime{font-size:12px; color:var(--mut); letter-spacing:.05em; min-width:64px}
+.mname{font-weight:650; font-size:16px; flex:1 1 auto}
+.mmac{font-size:13px; white-space:nowrap}
+.mmac b{color:var(--acc)}
+.mdesc{color:var(--mut); font-size:13.5px; margin:3px 0 0}
+.mchk{width:21px; height:21px; accent-color:var(--acc); flex:0 0 auto; align-self:center}
+.foodchips{display:flex; gap:8px; margin-top:9px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px}
+.fchip{flex:0 0 auto; border:1px solid var(--line); background:var(--chipbg); border-radius:7px;
+  padding:0; cursor:pointer; display:flex; align-items:center; gap:7px; overflow:hidden}
+.fchip img{width:52px; height:44px; object-fit:cover; display:block}
+.fchip span{font-size:12.5px; padding-right:10px; white-space:nowrap}
+.cheatbox{border:1px dashed var(--cheat); background:color-mix(in srgb, var(--cheat) 7%, var(--card));
+  border-radius:8px; padding:12px 14px; margin-bottom:10px; font-size:14px}
+.cheatbox b{color:var(--cheat)}
+.cheatbox ul{margin:6px 0 0; padding-left:18px}
+.cheatbox li{margin:3px 0}
+
+.gib{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.05em; border-radius:3px;
+  padding:1px 7px; color:#fff; vertical-align:middle}
+.gib.low{background:var(--gilow)} .gib.med{background:var(--gimed)} .gib.high{background:var(--gihigh)} .gib.na{background:var(--mut)}
+
+h2.sect{font-size:clamp(22px,5vw,28px); margin:36px 0 10px; color:var(--acc)}
+.foodgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px}
+.fcard{border:1px solid var(--line); background:var(--card); border-radius:8px; overflow:hidden; cursor:pointer; padding:0; text-align:left}
+.fcard img{width:100%; height:86px; object-fit:cover; display:block}
+.fcard .fb{padding:7px 9px}
+.fcard .fn{font-weight:650; font-size:13.5px; line-height:1.25}
+.fcard .fm{color:var(--mut); font-size:12px; margin-top:2px}
+
+.shop{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+@media (max-width:560px){ .shop{grid-template-columns:1fr} }
+.shopcol{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px}
+.shopcol h3{margin:0 0 8px; font-size:14px; letter-spacing:.06em; color:var(--mut)}
+.srow{display:flex; align-items:center; gap:9px; padding:4px 0; font-size:14px}
+.srow input{width:18px; height:18px; accent-color:var(--acc)}
+.srow .price{margin-left:auto; color:var(--mut); font-size:13px}
+.srow.done span{text-decoration:line-through; color:var(--mut)}
+.stot{border-top:1px solid var(--line); margin-top:8px; padding-top:7px; font-size:13.5px; display:flex; justify-content:space-between}
+
+.weigh{background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px}
+.weigh .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.weigh input[type=number]{width:110px; font:inherit; padding:7px 10px; border:1px solid var(--line);
+  border-radius:6px; background:var(--bg); color:var(--ink)}
+.weigh button.save{padding:8px 16px; border-radius:6px; border:none; background:var(--acc); color:#fff; font-weight:650; cursor:pointer}
+.weigh svg{width:100%; height:120px; margin-top:10px}
+.weigh .hist{font-size:12.5px; color:var(--mut); margin-top:6px; line-height:1.7}
+
+details.pb{background:var(--card); border:1px solid var(--line); border-radius:8px; margin-bottom:8px; padding:0 14px}
+details.pb summary{cursor:pointer; font-weight:650; font-size:14.5px; padding:11px 0; list-style-position:outside}
+details.pb p{margin:0 0 12px; font-size:14px; color:var(--ink)}
+
+/* bottom sheet */
+#backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:20; display:none}
+#sheet{position:fixed; left:0; right:0; bottom:0; z-index:21; background:var(--card);
+  border-radius:16px 16px 0 0; border:1px solid var(--line); border-bottom:none;
+  max-width:740px; margin:0 auto; max-height:82vh; overflow-y:auto; display:none;
+  padding:0 0 calc(16px + env(safe-area-inset-bottom));}
+#sheet.open,#backdrop.open{display:block}
+#sheet .grab{width:44px; height:5px; border-radius:3px; background:var(--line); margin:8px auto}
+#sheet img.hero{width:100%; height:190px; object-fit:cover; display:block}
+#sheet .sb{padding:12px 16px 0}
+#sheet h3{margin:0; font-size:22px}
+#sheet .portion{color:var(--mut); font-size:13.5px; margin:2px 0 10px}
+.macros{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin:10px 0}
+.macros div{background:var(--chipbg); border:1px solid var(--line); border-radius:6px; padding:7px 4px; text-align:center}
+.macros b{display:block; font-size:16px}
+.macros small{color:var(--mut); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase}
+#sheet .ginote,#sheet .note{font-size:14px; margin:8px 0}
+#sheet .swap{font-size:13.5px; color:var(--mut); border-top:1px dashed var(--line); padding-top:8px; margin-top:10px}
+#sheet .src{font-size:12px; color:var(--mut); margin-top:10px}
+#sheet .close{position:absolute; right:10px; top:10px; width:32px; height:32px; border-radius:50%;
+  border:none; background:rgba(0,0,0,.45); color:#fff; font-size:16px; cursor:pointer}
+
+footer{margin-top:36px; color:var(--mut); font-size:13px; border-top:1px solid var(--line); padding-top:14px}
+footer a{color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="pagenav disp"><a href="index.html">🏋 Gym</a><a class="on" href="diet.html">🍽 Diet</a></div>
+
+<header class="top">
+  <h1 class="disp">Weekly Cut Diet</h1>
+  <p class="sub">Ghar ka khana · tap any food photo for nutrition + GI · Saturday cheat meal</p>
+  <div class="meta disp">
+    <span>150 g protein</span><span>~1,700 kcal</span><span>30 g fiber</span><span>3–3.5 L water</span><span>Ghee/butter only · 3–4 tsp</span>
+  </div>
+</header>
+
+<div class="today" id="today"></div>
+
+<div class="rules">
+  <div class="rule"><h3 class="disp">Every single day</h3>
+    <p><b>Whey:</b> 1 scoop in <b>water, never milk</b> — right after the workout. <b>Chai:</b> max 2 cups, 1 tsp sugar each. <b>10–15 min walk after dinner</b> — non-negotiable. <b>Night:</b> 1 tsp isabgol in warm water if no motion that day.</p></div>
+  <div class="rule"><h3 class="disp">Order of eating</h3>
+    <p>Kheera/salad first → protein → sabzi → roti last. Appetite crashes? <b>Drop roti first, protein never gets dropped.</b></p></div>
+  <div class="rule"><h3 class="disp">Gut rules</h3>
+    <p>Never more than ~45–50 g protein in one sitting. Curd daily. Burps persist past week 2 → cut eggs to 3, add 20 g soya to breakfast chilla.</p></div>
+  <div class="rule"><h3 class="disp">Weigh-in</h3>
+    <p><b>Wednesday mornings only</b> — after toilet, before food. Post-cheat scale (Sun–Mon) lies by 1–2 kg of water. Log it below ↓</p></div>
+</div>
+
+<nav class="days" id="nav" aria-label="Jump to day"></nav>
+<main id="days"></main>
+
+<h2 class="sect disp" id="foods">All foods — tap for nutrition + GI</h2>
+<p style="font-size:13.5px;color:var(--mut);margin:0 0 10px">GI badge: <span class="gib low">LOW ≤55</span> <span class="gib med">MED 56–69</span> <span class="gib high">HIGH 70+</span> <span class="gib na">GI — (no carbs)</span>. Low GI = steady energy, better fat loss.</p>
+<div class="foodgrid" id="foodgrid"></div>
+
+<h2 class="sect disp" id="avoid">Limit or avoid</h2>
+<div class="meal">
+  <ul class="cheatbox" style="border:none;background:none;padding:0;margin:0;list-style:none">
+    <li style="margin:4px 0"><span class="gib high">GI 78</span> <b>Aloo</b> — a few cubes mixed in sabzi fine; aloo-as-the-sabzi, no.</li>
+    <li style="margin:4px 0"><span class="gib high">GI 73</span> <b>White rice</b> — if you must: ½ katori with dal, once a week, never with chicken curry (roti instead).</li>
+    <li style="margin:4px 0"><span class="gib high">⚠</span> <b>Sugary drinks, juice, sweet lassi</b> — fastest way to erase a week's deficit.</li>
+    <li style="margin:4px 0"><span class="gib high">⚠</span> <b>Refined-oil deep-fried anything</b> — ghee is stable at high heat and more satiating, but it's 45 kcal/tsp: the cap matters more than the choice.</li>
+  </ul>
+</div>
+
+<h2 class="sect disp" id="shopping">Sunday shopping run</h2>
+<p style="font-size:13.5px;color:var(--mut);margin:0 0 10px">One veg trip + one protein trip. Check off as you buy — resets every week. July 2026 Powai rates.</p>
+<div class="shop" id="shop"></div>
+
+<h2 class="sect disp" id="weight">Weigh-in log <span class="gib low" style="vertical-align:middle">WEDNESDAYS</span></h2>
+<div class="weigh" id="weigh"></div>
+
+<h2 class="sect disp" id="playbook">Hiccup playbook — decided in advance</h2>
+<p style="font-size:13.5px;color:var(--mut);margin:0 0 10px">Golden rule: <b style="color:var(--ink)">never miss twice.</b> One bad day is noise; two in a row is a new habit forming.</p>
+<div id="playbook"></div>
+
+<footer>
+  Food photos via <a href="https://en.wikipedia.org" target="_blank" rel="noopener">Wikipedia / Wikimedia Commons</a> (free licenses — source link inside each food card). Photos are representative — your plate is the portion in the card, not the photo.
+</footer>
+</div>
+
+<div id="backdrop"></div>
+<div id="sheet" role="dialog" aria-modal="true">
+  <button class="close" aria-label="Close">✕</button>
+  <div class="grab"></div>
+  <img class="hero" alt="">
+  <div class="sb"></div>
+</div>
+
+<script>
+/* ---------- FOOD DATABASE ----------
+   per-portion values as eaten in this plan (approx). gi:null = protein/fat food, GI not meaningful */
+const FOODS={
+ bhurji:{n:'4-Egg Bhurji',img:'bhurji',portion:'4 eggs · pyaz, tamatar, mirch, dhania · ½ tsp butter',p:25,kcal:330,c:5,f:24,fib:1,gi:null,
+  note:'Cheapest complete protein in the plan. ½ tsp butter counted in the day\'s fat cap.',
+  swap:'Swap: 4-egg masala omelette (same macros) or anda chaat if it\'s too hot to cook.'},
+ omelette:{n:'4-Egg Masala Omelette',img:'omelette',portion:'4 eggs · pyaz, mirch, dhania · ½ tsp butter',p:25,kcal:330,c:4,f:24,fib:1,gi:null,
+  note:'Same food as bhurji, different shape — variety keeps you on the plan.',swap:'Swap: bhurji, boiled-egg chaat.'},
+ boiled_eggs:{n:'Boiled Eggs',img:'boiled_eggs',portion:'per 2 eggs',p:12,kcal:140,c:1,f:10,fib:0,gi:null,
+  note:'Zero cooking, travels well, sits easiest on a rough-appetite day. Wed breakfast = 4 eggs chopped into anda chaat (pyaz, tamatar, chaat masala, nimbu).',
+  swap:'Swap: any egg preparation, same count.'},
+ chilla:{n:'Besan-Moong Chilla',img:'chilla',portion:'2 chillas · green chutney · ½ tsp ghee on tawa',p:12,kcal:250,c:30,f:8,fib:5,gi:35,
+  note:'Batter sits fine overnight in the fridge. Photo shows the same style of dal chilla.',
+  swap:'Swap: moong-dal chilla (same numbers) or 2 eggs + 1 roti.'},
+ moong_chilla:{n:'Moong-Dal Chilla',img:'moong_chilla',portion:'2 chillas',p:14,kcal:240,c:28,f:7,fib:5,gi:38,
+  note:'Beat 1 egg into the batter or fry it on top — that\'s the Friday breakfast.',swap:'Swap: besan chilla.'},
+ paneer_paratha:{n:'Paneer Paratha',img:'paneer_paratha',portion:'1 paratha · 50 g paneer stuffing · 1 tsp ghee',p:14,kcal:320,c:32,f:15,fib:4,gi:55,
+  note:'The Sunday-feeling breakfast that\'s still on plan. One, not two.',swap:'Swap: 2 roti + paneer bhurji (leaner).'},
+ roti:{n:'Roti (whole wheat)',img:'roti',portion:'1 phulka, no ghee on top',p:3,kcal:105,c:20,f:1,fib:3,gi:54,
+  note:'Your carb anchor — max 5/day. When appetite crashes, roti is the FIRST thing you drop, never the protein.',
+  swap:'Swap: 1 roti ⇄ ½ katori rice with dal (once a week, GI 73 — roti wins).'},
+ dal:{n:'Dal + 30 g Soya Chunks',img:'dal',portion:'1 big katori, tadka = 1 tsp ghee',p:21,kcal:230,c:24,f:6,fib:8,gi:29,
+  note:'The 30 g dry soya chunks soak 10 min and vanish into the dal — 15 g extra protein nobody notices.',
+  swap:'Swap dal type freely (moong/masoor/chana) — soya goes in whichever.'},
+ curd:{n:'Curd (Dahi)',img:'curd',portion:'150 g, plain',p:5,kcal:90,c:7,f:5,fib:0,gi:28,
+  note:'Daily — probiotic support for the gut rules. If milk turns out to be the burp culprit, keep chaas and re-route protein.',
+  swap:'Swap: 1 glass chaas (lighter, easier to digest).'},
+ salad:{n:'Kachumber Salad',img:'salad',portion:'kheera, pyaz, tamatar, nimbu — big bowl',p:1,kcal:35,c:7,f:0,fib:2,gi:15,
+  note:'Eat FIRST at every meal — fills the stomach, helps constipation.',swap:'Swap: plain kheera sticks, unlimited.'},
+ kheera:{n:'Kheera (Cucumber)',img:'kheera',portion:'unlimited',p:1,kcal:15,c:3,f:0,fib:1,gi:15,
+  note:'Before meals — cheapest appetite management there is.',swap:'—'},
+ bhindi:{n:'Bhindi Sabzi',img:'bhindi',portion:'150 g · 1 tsp ghee max',p:3,kcal:95,c:11,f:5,fib:5,gi:20,
+  note:'High fiber. Don\'t deep-fry it. Monsoon: buy firm, store dry in paper.',swap:'Any sabzi from the GI list swaps in.'},
+ gobi_matar:{n:'Gobi-Matar Sabzi',img:'gobi_matar',portion:'150 g',p:5,kcal:120,c:13,f:5,fib:5,gi:15,
+  note:'If gobi gives you gas, swap with lauki that week — pre-decided.',swap:'Swap: lauki, patta gobi.'},
+ palak_dal:{n:'Palak Dal',img:'palak_dal',portion:'1 katori with 30 g soya',p:21,kcal:230,c:22,f:6,fib:8,gi:25,
+  note:'Iron + folate. Monsoon: wash palak 3× thoroughly.',swap:'Swap: plain dal + any green sabzi.'},
+ lauki_dal:{n:'Lauki-Chana Dal',img:'lauki_dal',portion:'1 katori · 150 g lauki · 30 g soya in the dal',p:21,kcal:220,c:22,f:5,fib:8,gi:22,
+  note:'Lightest on digestion — the go-to on nausea/heavy days.',swap:'Swap: plain moong dal + kheera.'},
+ beans_sabzi:{n:'French Beans–Gajar Sabzi',img:'beans_sabzi',portion:'150 g',p:3,kcal:110,c:12,f:5,fib:5,gi:15,
+  note:'Good fiber, holds well in the fridge all week.',swap:'Any low-GI sabzi.'},
+ karela:{n:'Karela Sabzi (pyaz-wala)',img:'karela',portion:'100 g',p:2,kcal:90,c:9,f:5,fib:4,gi:18,
+  note:'Helps blood sugar — pairs perfectly with the fat-loss goal.',swap:'Swap: bhindi, lauki.'},
+ patta_gobi:{n:'Patta Gobi Sabzi',img:'patta_gobi',portion:'150 g',p:3,kcal:100,c:10,f:5,fib:4,gi:10,
+  note:'Cheapest fiber in the mandi.',swap:'Any low-GI sabzi.'},
+ baingan_bharta:{n:'Baingan Bharta',img:'baingan_bharta',portion:'150 g',p:3,kcal:110,c:11,f:6,fib:5,gi:15,
+  note:'Bharta = roasted, minimal oil needed by design.',swap:'Any low-GI sabzi.'},
+ shimla:{n:'Shimla Mirch Stir-Fry',img:'shimla',portion:'100 g with pyaz',p:2,kcal:80,c:9,f:4,fib:3,gi:15,
+  note:'Vitamin C — helps iron absorb from palak/dal.',swap:'Any low-GI sabzi.'},
+ chana:{n:'Roasted Chana',img:'chana',portion:'40 g (30 g on Sunday)',p:8,kcal:160,c:21,f:3,fib:7,gi:28,
+  note:'Pre-gym fuel — never lift fully fasted. Buy 1 kg/month.',swap:'Swap: 30 g peanuts (less carb, more fat).'},
+ peanuts:{n:'Roasted Peanuts',img:'peanuts',portion:'30 g',p:8,kcal:170,c:5,f:14,fib:3,gi:14,
+  note:'Counted, not free — 30 g is a small handful, weigh it the first week.',swap:'Swap: 40 g roasted chana.'},
+ banana:{n:'Banana',img:'banana',portion:'1, pre-gym only',p:1,kcal:105,c:27,f:0,fib:3,gi:51,
+  note:'Only on gym days, only before the workout — the one fast carb with a job.',swap:'Skip on rest days.'},
+ chaas:{n:'Chaas',img:'chaas',portion:'1 glass, jeera + salt',p:2,kcal:35,c:4,f:1,fib:0,gi:30,
+  note:'Easier than curd on the gut. Fills the 5 pm gap with the peanuts.',swap:'Swap: plain nimbu-soda (0 kcal).'},
+ whey:{n:'Whey Protein',img:'whey',portion:'1 scoop in WATER (Amul, ~26 g protein)',p:26,kcal:130,c:3,f:2,fib:0,gi:null,
+  note:'In water, never milk — the gut rules exist for a reason. Gym days: right after the workout. Reorder at week 6, not when empty.',
+  swap:'Emergency floor on a can\'t-eat day: 2 scoops + curd is a valid meal.'},
+ sprouts:{n:'Moong Sprouts Chaat',img:'sprouts',portion:'1 katori · pyaz, tamatar, nimbu, chaat masala',p:10,kcal:180,c:24,f:2,fib:8,gi:25,
+  note:'Sprout 500 g moong once a month — ₹75 of protein snacks.',swap:'Swap: roasted chana.'},
+ chicken_curry:{n:'Chicken Curry',img:'chicken_curry',portion:'200 g breast · dahi-pyaz-tamatar gravy · 1 tsp ghee tadka',p:45,kcal:380,c:6,f:18,fib:1,gi:null,
+  note:'Buy from the Powai chicken shop (₹300–320/kg), not delivery apps (₹450+). Change the masala between Monday and Friday so it never gets boring.',
+  swap:'Swap: tandoori-style chicken, grilled chicken, or 200 g fish fry (1 tsp ghee).'},
+ tandoori_chicken:{n:'Tandoori-Style Chicken',img:'tandoori_chicken',portion:'200 g breast · dahi + tandoori masala, pan-grilled · 1 tsp ghee',p:46,kcal:360,c:4,f:16,fib:0,gi:null,
+  note:'Marinate in the morning, pan-grill at night — restaurant taste, home numbers.',
+  swap:'Swap: chicken curry, grilled chicken.'},
+ grilled_chicken:{n:'Grilled Chicken',img:'grilled_chicken',portion:'200 g breast + shimla-pyaz stir-fry',p:45,kcal:380,c:8,f:17,fib:2,gi:null,
+  note:'Sunday upgrade option: bangda/surmai fish fry (1 tsp ghee) from Powai fish market.',
+  swap:'Swap: any chicken preparation or 150 g paneer.'},
+ paneer_bhurji:{n:'Anda-Paneer Bhurji',img:'paneer_bhurji',portion:'150 g paneer + 2 eggs · shimla mirch + pyaz · 1 roti alongside',p:37,kcal:415,c:8,f:28,fib:1,gi:null,
+  note:'Beat the eggs into the bhurji. Amul paneer ₹90–95/200 g. (Photo: paneer tikka — same idea, grill version.)',
+  swap:'Swap: 60 g soya chunk masala + curd, or chicken.'},
+ soya_masala:{n:'Soya Chunk Masala',img:'soya_masala',portion:'60 g dry chunks · pyaz-tamatar gravy · 1 tsp ghee · + 150 g curd',p:31,kcal:260,c:16,f:6,fib:9,gi:30,
+  note:'Soak, squeeze hard, then cook — the squeeze is what fixes the texture. Causes gas? Halve the dose for a week; sattu is the cheap backup.',
+  swap:'Swap: paneer 150 g or chicken 150 g.'},
+ papaya:{n:'Papaya',img:'papaya',portion:'1 bowl',p:1,kcal:60,c:15,f:0,fib:2,gi:59,
+  note:'Seasonal fruit slot — jamun in season is the GI-friendliest pick.',swap:'Swap: jamun, ½ apple, seasonal.'},
+ jamun:{n:'Jamun',img:'jamun',portion:'1 katori',p:1,kcal:60,c:14,f:0,fib:2,gi:25,
+  note:'In season (July) and GI-friendly — the best fruit on this plan right now.',swap:'Swap: papaya bowl.'},
+ ghee:{n:'Ghee / Butter',img:'ghee',portion:'1 tsp = 45 kcal · day cap 3–4 tsp TOTAL',p:0,kcal:45,c:0,f:5,fib:0,gi:null,
+  note:'You refuse refined oil — fine, ghee is stable at high heat. But measure with a real teaspoon: the cap is the whole game.',
+  swap:'—'}
+};
+
+/* ---------- WEEK MENU (updated for the 6-day PPL split) ---------- */
+const DAYS=[
+ {id:'mon',day:'Mon',tag:'Gym PM · Push A',p:148,kcal:'~1,700',meals:[
+  {t:'9 AM',n:'4-egg bhurji + 1 roti',p:27,k:420,d:'Pyaz, tamatar, hari mirch, dhania · ½ tsp butter',f:['bhurji','roti']},
+  {t:'1 PM',n:'Lunch + bhindi sabzi',p:37,k:600,d:'2 roti · dal with 30 g soya · curd · salad',f:['roti','dal','bhindi','curd','salad']},
+  {t:'5 PM',n:'Roasted chana 40 g + 1 banana',p:9,k:250,d:'Pre-gym fuel — never lift fasted',f:['chana','banana']},
+  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
+  {t:'8:30 PM',n:'Chicken curry — 200 g breast + salad',p:45,k:380,d:'Dahi-pyaz-tamatar gravy, 1 tsp ghee tadka. Roti optional',f:['chicken_curry','salad']}]},
+ {id:'tue',day:'Tue',tag:'Gym PM · Pull A',p:147,kcal:'~1,750',meals:[
+  {t:'9 AM',n:'Besan-moong chilla ×2 + 2 boiled eggs',p:26,k:400,d:'Green chutney · ½ tsp ghee on tawa',f:['chilla','boiled_eggs']},
+  {t:'1 PM',n:'Lunch + gobi-matar sabzi',p:37,k:600,d:'2 roti · palak dal with 30 g soya · curd · salad',f:['roti','palak_dal','gobi_matar','curd','salad']},
+  {t:'5 PM',n:'Peanuts 30 g + chaas 1 glass',p:9,k:220,d:'Pre-gym fuel',f:['peanuts','chaas']},
+  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
+  {t:'8:30 PM',n:'Anda-paneer bhurji + 1 roti',p:40,k:520,d:'150 g paneer + 2 eggs · shimla mirch + pyaz in it',f:['paneer_bhurji','roti']}]},
+ {id:'wed',day:'Wed',tag:'Gym PM · Legs A',p:146,kcal:'~1,650',meals:[
+  {t:'9 AM',n:'Anda chaat (4 boiled eggs)',p:25,k:310,d:'Chopped with pyaz, tamatar, chaat masala, nimbu',f:['boiled_eggs']},
+  {t:'1 PM',n:'Lunch + lauki-chana dal',p:37,k:600,d:'2 roti · 30 g soya in the dal · curd · salad',f:['roti','lauki_dal','curd','salad']},
+  {t:'5 PM',n:'Moong sprouts chaat + ½ banana',p:11,k:230,d:'Pre-gym fuel for Legs A',f:['sprouts','banana']},
+  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'Moved post-gym now that Wednesday is a lifting day',f:['whey']},
+  {t:'8:30 PM',n:'Tandoori-style chicken — 200 g breast + big salad',p:46,k:360,d:'Dahi + tandoori masala marinade, pan-grilled, 1 tsp ghee',f:['tandoori_chicken','salad']}]},
+ {id:'thu',day:'Thu',tag:'Gym PM · Push B',p:145,kcal:'~1,650',meals:[
+  {t:'9 AM',n:'4-egg masala omelette + 1 roti',p:27,k:420,d:'Pyaz, mirch, dhania · ½ tsp butter',f:['omelette','roti']},
+  {t:'1 PM',n:'Lunch + French beans–gajar sabzi',p:37,k:600,d:'2 roti · dal with 30 g soya · curd · salad',f:['roti','dal','beans_sabzi','curd','salad']},
+  {t:'5 PM',n:'Roasted chana 40 g + 1 banana',p:9,k:250,d:'Pre-gym fuel',f:['chana','banana']},
+  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
+  {t:'8:30 PM',n:'Soya chunk masala — 60 g dry + 150 g curd',p:38,k:380,d:'Pyaz-tamatar gravy, 1 tsp ghee · soak chunks, squeeze, then cook',f:['soya_masala','curd']}]},
+ {id:'fri',day:'Fri',tag:'Gym PM · Pull B',p:146,kcal:'~1,700',meals:[
+  {t:'9 AM',n:'Moong-dal chilla ×2 + 1 egg + 150 g curd',p:25,k:400,d:'Egg beaten into the batter or fried on top',f:['moong_chilla','boiled_eggs','curd']},
+  {t:'1 PM',n:'Lunch + karela sabzi',p:37,k:590,d:'2 roti · dal with 30 g soya · curd · salad · karela = blood-sugar bonus',f:['roti','dal','karela','curd','salad']},
+  {t:'5 PM',n:'Peanuts 30 g + chaas',p:9,k:220,d:'Pre-gym fuel',f:['peanuts','chaas']},
+  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
+  {t:'8:30 PM',n:'Chicken curry — 200 g breast + salad',p:45,k:380,d:'Change the masala from Monday — kali mirch or achari style',f:['chicken_curry','salad']}]},
+ {id:'sat',day:'Sat',tag:'Gym AM/PM · Legs B + CHEAT',p:120,kcal:'~2,300 cap',cheat:true,meals:[
+  {t:'9–10 AM',n:'4-egg bhurji + 1 roti + whey',p:53,k:550,d:'Normal breakfast — bank the protein before the fun. Whey after the workout if lifting in the morning',f:['bhurji','roti','whey']},
+  {t:'1 PM',n:'Light home lunch + patta gobi sabzi',p:30,k:500,d:'1–2 roti · dal · curd — keep it lighter than usual',f:['roti','dal','patta_gobi','curd']},
+  {t:'EVENING',n:'CHEAT MEAL — go out, eat what you love',p:35,k:1100,d:'Budget ~1,000–1,200 kcal · order rules below',f:[]}]},
+ {id:'sun',day:'Sun',tag:'Rest + shopping',p:148,kcal:'~1,750',meals:[
+  {t:'9–10 AM',n:'Paneer paratha ×1 + 2 boiled eggs + curd + whey',p:59,k:640,d:'50 g paneer stuffing, 1 tsp ghee — the Sunday-feeling breakfast, on plan. Rest-day whey goes with breakfast',f:['paneer_paratha','boiled_eggs','curd','whey']},
+  {t:'1:30 PM',n:'Lunch + baingan bharta',p:37,k:600,d:'2 roti · dal with 30 g soya · curd · salad',f:['roti','dal','baingan_bharta','curd','salad']},
+  {t:'5 PM',n:'Fruit + roasted chana 30 g',p:7,k:180,d:'Papaya / seasonal — jamun is in season and GI-friendly',f:['papaya','jamun','chana']},
+  {t:'8:30 PM',n:'Grilled chicken — 200 g breast + shimla mirch–pyaz stir-fry',p:45,k:380,d:'Or upgrade: bangda/surmai fish fry (1 tsp ghee) from Powai fish market',f:['grilled_chicken','shimla']}]}
+];
+const CHEAT_RULES=[
+ ['One cheat MEAL per week, not a cheat day.','Breakfast and lunch stay on plan; the outing is dinner (or a lunch out — then dinner goes light: whey + curd + fruit).'],
+ ['Day cap ~2,300–2,400 kcal.','Six days of deficit stay intact — you still lose ~0.5 kg that week.'],
+ ['It floats.','Going out Wednesday instead? Wednesday becomes cheat day, Saturday takes Wednesday\'s menu. Maximum one per week — that part is fixed.'],
+ ['Order protein first:','tandoori chicken / chicken tikka / seekh kebab / paneer tikka starter. Then the thing you actually came for — one plate biryani, butter chicken + 1 naan, thali, whatever.'],
+ ['Dessert: share it.','3–4 bites is the win, not the whole gulab jamun plate.'],
+ ['Skip liquid calories:','colas, sweet lassi, mocktails = 300+ kcal that never fill you. Nimbu-soda or plain chaas instead.'],
+ ['Deep-fried warning:','very oily food is the #1 nausea trigger right now. A plate of bhajiya can ruin your night — grilled/tandoori sits much better. Alcohol hits harder too: if at all, 1–2 drinks, nothing sugary.'],
+ ['Sunday after:','back on plan, no starving to "compensate", no guilt. The scale WILL be up 1–2 kg for two days — salt and water, not fat. Weigh Wednesday only.']
+];
+const SHOP={
+ veg:{title:'Sabzi mandi (weekly) · ~₹540',items:[['Bhindi 500 g',40],['Lauki 1 medium',25],['Palak 2 bunches',30],['Gobi 1 medium',40],['French beans 250 g',30],['Karela 250 g',20],['Baingan 400 g (bharta-wala)',30],['Shimla mirch 250 g',30],['Patta gobi 1 small',20],['Kheera 6',40],['Tamatar 1 kg + pyaz 1 kg',85],['Gajar 250 g, nimbu 6, adrak-lehsun-mirch-dhania',70],['Bananas 4 (gym days) + papaya 1',80]]},
+ protein:{title:'Protein counter (weekly) · ~₹715',items:[['Eggs — 1 tray of 30',230],['Chicken breast, boneless 800 g',250],['Amul paneer 200 g × 1',95],['Curd (Amul Masti 400 g) × 4',140]]},
+ monthly:{title:'Monthly one-timers',items:[['Soya chunks — Fortune 1 kg × 2',300],['Roasted chana 1 kg + peanuts 1 kg',260],['Moong (for sprouts) 500 g',75],['Isabgol 100 g',140]]}
+};
+const PLAYBOOK=[
+ ['Rough-appetite week (nausea)','Switch to the cold menu: boiled eggs, curd, chaas, lauki, whey. Two whey scoops + curd is a valid emergency day. Never force a meal down.'],
+ ['Nausea ruins Saturday cheat','Float the cheat to Wed/Thu that week. Keep the pattern: max one cheat meal per week.'],
+ ['No motion 3+ days','Isabgol both morning AND night + 500 ml extra water + 20-min walk. Day 4: pharmacist for lactulose. Day 5+: doctor.'],
+ ['Week-3 motivation crash','Minimum viable day: show up, 60% weights or 20-min incline walk, protein hit. Attendance counts, intensity doesn\'t.'],
+ ['Second outing in the same week','Not a cheat. Order tandoori/tikka + salad + nimbu-soda, count it as a normal dinner. Cheat stays 1/week.'],
+ ['Scale stuck 2–3 weeks (likely week 8–12)','Don\'t cut food. Measure waist — if it\'s shrinking, the plan works. Still stuck after 3 weeks: drop 1 roti/day OR add 2k steps, not both.'],
+ ['Soya chunks cause gas/bloating','Halve the dose for a week. Still bad: replace with +1 egg at breakfast and +50 g chicken at dinner. Sattu (₹120/kg, 20 g protein/100 g) is the cheap backup.'],
+ ['Curd/milk turns out to be the burp culprit','Keep chaas (easier than curd), drop paneer dinners → chicken/soya. Re-route protein: +1 egg +50 g chicken.'],
+ ['Tomato/veg prices spike (monsoon)','Eggs are the cheapest protein per rupee — shift a chicken dinner to a 4-egg dinner that week. Budget has ~₹400 buffer.'],
+ ['Whey runs out (~2 months)','Reorder at week 6, not when empty. Bridge gap with sattu-nimbu shake or 200 g curd + 2 eggs.'],
+ ['Slept under 6 hours','Gym still happens but lift 80%, no new weight jumps that day. Two bad nights in a row: fix sleep before adding anything else.'],
+ ['Hair shedding around month 3–4','Telogen effluvium — common with fast loss, temporary, regrows. The protein target protects you; don\'t panic-quit the plan over it.'],
+ ['Right-upper belly pain after fatty meals','Gallstone warning sign with rapid weight loss — doctor within 48 h. Loss faster than ~1.5 kg/week raises this risk; that\'s why we don\'t chase speed.']
+];
+
+/* ---------- render helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/</g,'&lt;');
+const gib=gi=>gi==null?'<span class="gib na">GI —</span>':gi<=55?`<span class="gib low">GI ${gi}</span>`:gi<=69?`<span class="gib med">GI ${gi}</span>`:`<span class="gib high">GI ${gi}</span>`;
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+const jsDay=new Date().getDay(); // 0 Sun
+const todayId=['sun','mon','tue','wed','thu','fri','sat'][jsDay];
+const store=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+
+/* nav + day sections */
+$('#nav').innerHTML=DAYS.map(d=>`<a href="#${d.id}" class="${d.id===todayId?'today':''}">${d.day}${d.id===todayId?' · today':''}</a>`).join('');
+$('#days').innerHTML=DAYS.map(d=>`
+<section class="day ${d.cheat?'cheatday':''}" id="${d.id}">
+  <div class="dayhead">
+    <h2 class="disp">${d.day==='Mon'?'Monday':d.day==='Tue'?'Tuesday':d.day==='Wed'?'Wednesday':d.day==='Thu'?'Thursday':d.day==='Fri'?'Friday':d.day==='Sat'?'Saturday':'Sunday'}</h2>
+    <span class="tag disp">${d.tag}</span>
+    <span class="tot mono">~${d.p} g P · ${d.kcal} kcal</span>
+  </div>
+  ${d.meals.map((m,i)=>`
+  <div class="meal" data-day="${d.id}" data-i="${i}">
+    <div class="mrow">
+      ${d.id===todayId?`<input type="checkbox" class="mchk" data-p="${m.p}" data-k="${m.k}" aria-label="Mark eaten">`:''}
+      <span class="mtime mono">${m.t}</span>
+      <span class="mname">${m.n}</span>
+      <span class="mmac mono"><b>${m.p}g</b> · ${m.k}</span>
+    </div>
+    ${m.d?`<p class="mdesc">${m.d}</p>`:''}
+    ${m.f.length?`<div class="foodchips">${m.f.map(id=>`<button class="fchip" data-food="${id}"><img loading="lazy" src="food/${FOODS[id].img}.jpg" alt=""><span>${FOODS[id].n.split('(')[0].trim()}</span></button>`).join('')}</div>`:''}
+  </div>`).join('')}
+  ${d.cheat?`<div class="cheatbox"><b>Cheat rules — yes, you're allowed</b><ul>${CHEAT_RULES.map(r=>`<li><b>${r[0]}</b> ${r[1]}</li>`).join('')}</ul></div>`:''}
+</section>`).join('');
+
+/* food grid */
+$('#foodgrid').innerHTML=Object.entries(FOODS).map(([id,f])=>`
+ <button class="fcard" data-food="${id}">
+   <img loading="lazy" src="food/${f.img}.jpg" alt="${f.n}">
+   <div class="fb"><div class="fn">${f.n}</div><div class="fm mono">${f.p}g P · ${f.kcal} kcal · ${f.gi==null?'GI —':'GI '+f.gi}</div></div>
+ </button>`).join('');
+
+/* shopping list */
+const week=(()=>{const d=new Date();const o=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil(((d-o)/864e5+o.getDay()+1)/7)})();
+function renderShop(){
+  const chk=load('shop-'+week,[]);
+  $('#shop').innerHTML=Object.entries(SHOP).map(([g,col])=>`
+   <div class="shopcol"><h3 class="disp">${col.title}</h3>
+   ${col.items.map((it,i)=>{const k=g+'-'+i;const on=chk.includes(k);
+     return `<label class="srow ${on?'done':''}"><input type="checkbox" data-k="${k}" ${on?'checked':''}><span>${it[0]}</span><span class="price mono">₹${it[1]}</span></label>`}).join('')}
+   ${g!=='monthly'?`<div class="stot"><span>Column total</span><b class="mono">₹${col.items.reduce((s,i)=>s+i[1],0)}</b></div>`:'<div class="stot"><span>Month, all-in</span><b class="mono">~₹5,600</b></div>'}
+   </div>`).join('');
+  $('#shop').querySelectorAll('input').forEach(cb=>cb.addEventListener('change',()=>{
+    let c=load('shop-'+week,[]);
+    cb.checked?c.push(cb.dataset.k):c=c.filter(x=>x!==cb.dataset.k);
+    store('shop-'+week,[...new Set(c)]); renderShop();
+  }));
+}
+renderShop();
+
+/* playbook */
+$('#playbook').innerHTML=PLAYBOOK.map(r=>`<details class="pb"><summary>${r[0]}</summary><p>${r[1]}</p></details>`).join('');
+
+/* today panel: protein/kcal progress + water */
+const dayData=DAYS.find(d=>d.id===todayId);
+const targetP=todayId==='sat'?120:150, targetK=todayId==='sat'?2300:1700;
+function renderToday(){
+  const checked=load('chk-'+todayISO(),[]);
+  let p=0,k=0;
+  if(dayData) checked.forEach(i=>{const m=dayData.meals[i]; if(m){p+=m.p;k+=m.k;}});
+  const water=load('water-'+todayISO(),0);
+  $('#today').innerHTML=`
+   <h2 class="disp">Today · ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][jsDay]}</h2>
+   <div class="tsub">${dayData?dayData.tag:''} — <a href="#${todayId}">jump to today's meals ↓</a>. Tick each meal as you eat it.</div>
+   <div class="blbl"><span>Protein</span><span class="mono">${p} / ${targetP} g</span></div>
+   <div class="bar"><i style="width:${Math.min(100,p/targetP*100)}%"></i></div>
+   <div class="blbl" style="margin-top:6px"><span>Calories</span><span class="mono">${k} / ~${targetK}</span></div>
+   <div class="bar kcal"><i style="width:${Math.min(100,k/targetK*100)}%"></i></div>
+   <div class="water" aria-label="Water tracker">
+     ${Array.from({length:8},(_,i)=>`<button data-w="${i+1}" class="${i<water?'full':''}" aria-label="glass ${i+1}">${i<water?'💧':''}</button>`).join('')}
+     <span class="wlbl">${(water*0.4).toFixed(1)} / 3.2 L — tap a glass</span>
+   </div>
+   ${jsDay===3?`<div class="wednote"><b>It's Wednesday — weigh-in morning.</b> After toilet, before food. <a href="#weight">Log it ↓</a></div>`:''}`;
+  $('#today').querySelectorAll('.water button').forEach(b=>b.addEventListener('click',()=>{
+    const n=+b.dataset.w, cur=load('water-'+todayISO(),0);
+    store('water-'+todayISO(), n===cur?n-1:n); renderToday();
+  }));
+}
+renderToday();
+
+/* meal checkboxes */
+document.querySelectorAll('.mchk').forEach(cb=>{
+  const meal=cb.closest('.meal'), idx=+meal.dataset.i;
+  cb.checked=load('chk-'+todayISO(),[]).includes(idx);
+  cb.addEventListener('change',()=>{
+    let c=load('chk-'+todayISO(),[]);
+    cb.checked?c.push(idx):c=c.filter(x=>x!==idx);
+    store('chk-'+todayISO(),[...new Set(c)]); renderToday();
+  });
+});
+
+/* weight log */
+function renderWeigh(){
+  const ws=load('weights',[]);
+  const last=ws.slice(-12);
+  let chart='';
+  if(last.length>=2){
+    const vals=last.map(x=>x.w), min=Math.min(...vals)-0.5, max=Math.max(...vals)+0.5;
+    const X=i=>20+(i*(300-40)/(last.length-1)), Y=v=>10+ (110-20)*(1-(v-min)/(max-min));
+    chart=`<svg viewBox="0 0 300 120" preserveAspectRatio="none" aria-label="Weight chart">
+      <polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="${last.map((x,i)=>X(i)+','+Y(x.w)).join(' ')}"/>
+      ${last.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x.w)}" r="3" fill="var(--acc)"/>`).join('')}
+      <text x="20" y="118" font-size="9" fill="var(--mut)">${last[0].d.slice(5)}</text>
+      <text x="258" y="118" font-size="9" fill="var(--mut)">${last[last.length-1].d.slice(5)}</text>
+      <text x="262" y="${Y(last[last.length-1].w)-6}" font-size="11" font-weight="700" fill="var(--acc)">${last[last.length-1].w}</text>
+    </svg>`;
+  }
+  const lost=ws.length>=2?(ws[0].w-ws[ws.length-1].w).toFixed(1):null;
+  $('#weigh').innerHTML=`
+   <div class="row">
+     <input type="number" step="0.1" min="60" max="130" placeholder="kg today" id="win" inputmode="decimal">
+     <button class="save" id="wsave">Save</button>
+     ${lost!==null?`<span style="font-size:13.5px;color:var(--mut)">total: <b style="color:var(--acc)">−${lost} kg</b> since first log</span>`:''}
+   </div>
+   ${chart}
+   <div class="hist">${ws.slice(-6).reverse().map(x=>`${x.d} — <b>${x.w} kg</b>`).join(' · ')||'No entries yet. Start with today.'}</div>`;
+  $('#wsave').addEventListener('click',()=>{
+    const v=parseFloat($('#win').value); if(!v||v<60||v>130) return;
+    let ws=load('weights',[]).filter(x=>x.d!==todayISO());
+    ws.push({d:todayISO(),w:v}); ws.sort((a,b)=>a.d<b.d?-1:1); store('weights',ws); renderWeigh();
+  });
+}
+renderWeigh();
+
+/* bottom sheet */
+let CREDITS={};
+fetch('food/credits.json').then(r=>r.json()).then(j=>CREDITS=j).catch(()=>{});
+function openSheet(id){
+  const f=FOODS[id]; if(!f) return;
+  $('#sheet img.hero').src=`food/${f.img}.jpg`;
+  const cr=CREDITS[f.img];
+  $('#sheet .sb').innerHTML=`
+   <h3>${f.n} ${gib(f.gi)}</h3>
+   <div class="portion">${f.portion}</div>
+   <div class="macros">
+     <div><b class="mono">${f.p}</b><small>protein g</small></div>
+     <div><b class="mono">${f.kcal}</b><small>kcal</small></div>
+     <div><b class="mono">${f.c}</b><small>carbs g</small></div>
+     <div><b class="mono">${f.f}</b><small>fat g</small></div>
+     <div><b class="mono">${f.fib}</b><small>fiber g</small></div>
+   </div>
+   <p class="ginote">${f.gi==null?'No meaningful carbs — glycemic index doesn\'t apply. Protein/fat foods don\'t spike blood sugar.':f.gi<=55?'Low GI — digests slowly, steady energy, the right kind of carb for fat loss.':f.gi<=69?'Medium GI — fine in this portion, don\'t double it.':'High GI — limit.'}</p>
+   <p class="note">${f.note}</p>
+   ${f.swap&&f.swap!=='—'?`<p class="swap">${f.swap}</p>`:''}
+   ${cr?`<p class="src">photo: <a href="${cr.commons}" target="_blank" rel="noopener">Wikimedia Commons ↗</a> (${esc(cr.article)})</p>`:''}`;
+  $('#sheet').classList.add('open'); $('#backdrop').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){ $('#sheet').classList.remove('open'); $('#backdrop').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-food]'); if(b){openSheet(b.dataset.food); return;}
+});
+$('#backdrop').addEventListener('click',closeSheet);
+$('#sheet .close').addEventListener('click',closeSheet);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+/* sw + offline warm-cache of all food photos */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>{
+    const urls=[...new Set(Object.values(FOODS).map(f=>`food/${f.img}.jpg`))];
+    setTimeout(async()=>{ for(const u of urls){ try{ await fetch(u); }catch(e){ break; } } }, 3000);
+  }).catch(()=>{});
+}
+</script>
+</body>
+</html>

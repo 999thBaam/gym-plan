@@ -1,7 +1,7 @@
 {
-  "name": "6-Day Push Pull Legs",
-  "short_name": "PPL",
-  "description": "6-day PPL gym schedule with photos and machine alternatives",
+  "name": "Cut Plan — Gym & Diet",
+  "short_name": "Cut Plan",
+  "description": "6-day PPL gym schedule + weekly cut diet with nutrition and GI info",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

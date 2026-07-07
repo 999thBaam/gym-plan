@@ -41,6 +41,11 @@ body{
 a{color:inherit}
 a:focus-visible{outline:2px solid var(--pull); outline-offset:2px; border-radius:4px}
 
+.pagenav{display:flex; gap:8px; margin-bottom:14px}
+.pagenav a{flex:1; text-align:center; text-decoration:none; padding:8px 0; border-radius:6px;
+  border:1px solid var(--line); background:var(--card); font-size:14px; letter-spacing:.06em}
+.pagenav a.on{background:var(--push); border-color:var(--push); color:#fff}
+
 header.top h1{font-size:clamp(34px,7vw,48px); line-height:.95; margin:6px 0 6px}
 header.top .sub{color:var(--mut); font-size:14px; margin:0 0 14px}
 .meta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px}
@@ -158,6 +163,7 @@ section.day.legs{--dc:var(--legs)}
 </head>
 <body>
 <div class="wrap">
+<div class="pagenav disp"><a class="on" href="index.html">🏋 Gym</a><a href="diet.html">🍽 Diet</a></div>
 <header class="top">
   <h1 class="disp">6-Day Push Pull Legs</h1>
   <p class="sub">Cut phase · July 2026 · tap any exercise name or <b>watch ↗</b> for a form video</p>
