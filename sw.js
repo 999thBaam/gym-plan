@@ -1,4 +1,4 @@
-const CACHE = 'ppl-v2';
+const CACHE = 'ppl-v3';
 const CORE = ['./', './index.html', './diet.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

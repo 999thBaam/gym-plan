@@ -88,8 +88,6 @@ section.day{margin-top:34px; scroll-margin-top:64px}
 .dayhead{border-left:5px solid var(--dc); padding-left:12px; margin-bottom:14px}
 .dayhead h2{font-size:clamp(26px,5.5vw,34px); margin:0; line-height:1; color:var(--dc)}
 .dayhead .bias{color:var(--mut); font-size:14px; margin-top:3px}
-.dayhead .warm{font-size:13px; color:var(--mut); margin-top:4px}
-.dayhead .warm b{color:var(--ink); font-weight:650}
 
 .ex{
   background:var(--card); border:1px solid var(--line); border-radius:8px;
@@ -142,9 +140,23 @@ section.day{margin-top:34px; scroll-margin-top:64px}
 
 .finisher{
   border:1px dashed var(--dc); border-radius:8px; padding:10px 14px; font-size:14px;
-  background:color-mix(in srgb, var(--dc) 6%, var(--card));
+  background:color-mix(in srgb, var(--dc) 6%, var(--card)); margin-bottom:14px;
 }
 .finisher b{color:var(--dc)}
+
+.prep{
+  border:1px dashed var(--dc); border-radius:8px; padding:12px 14px 6px;
+  background:color-mix(in srgb, var(--dc) 6%, var(--card)); margin-bottom:14px;
+}
+.prep h4{margin:0 0 8px; font-size:11.5px; letter-spacing:.08em; color:var(--dc)}
+.prow{
+  display:flex; flex-wrap:wrap; align-items:baseline; column-gap:10px; row-gap:2px;
+  padding:6px 0; font-size:13.5px;
+}
+.prow + .prow{border-top:1px solid color-mix(in srgb, var(--line) 55%, transparent)}
+.prow b{font-weight:650}
+.prow .pnote{color:var(--mut); flex:1 1 160px}
+.prow .vlink{margin-left:auto}
 
 .restcard{
   background:var(--card); border:1px solid var(--line); border-left:5px solid var(--rest);
@@ -181,7 +193,7 @@ section.day.legs{--dc:var(--legs)}
   <div class="rule"><h3 class="disp">Recovery valve (big calorie deficit)</h3>
     <p>If strength drops 2 weeks straight or sleep &lt; 6 h: cut every 4-set lift to 3 sets and skip the last exercise. Every 6th week = half volume. Sharp pain → stop that lift; soreness is fine.</p></div>
   <div class="rule"><h3 class="disp">Daily frame</h3>
-    <p>Warm-up: 5 min brisk walk + 2 light ramp sets on the first lift. Finish with a 10–15 min incline walk. Protein around the workout as planned.</p></div>
+    <p>Every day now lists its own warm-up and cool-down — do both, every session. Skipping them is the difference between normal soreness and can’t-get-up soreness.</p></div>
 </div>
 
 <nav class="days" id="nav" aria-label="Jump to day"></nav>
@@ -192,6 +204,7 @@ section.day.legs{--dc:var(--legs)}
   <h2 class="disp">Sunday · Rest</h2>
   <p>Full rest from lifting. Shopping + meal-prep day. Keep the 8–10k steps.</p>
   <p>Optional: 20–30 min easy walk. Nothing harder — six lifting days only work if this one stays empty.</p>
+  <p>A gentle 10-min full-body stretch — or just repeating yesterday’s cool-down stretches — does more for DOMS than lying still.</p>
 </section>
 
 <footer>
@@ -204,7 +217,17 @@ section.day.legs{--dc:var(--legs)}
 const yt=q=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q+' form')}`;
 /* v = [name, note, youtubeQuery, imageFolder|null] */
 const DATA=[
-{id:'mon',day:'Mon',cls:'push',title:'Push A',bias:'Chest bias — chest · shoulders · triceps',ex:[
+{id:'mon',day:'Mon',cls:'push',title:'Push A',bias:'Chest bias — chest · shoulders · triceps',
+ wu:[['Incline walk or bike','5 min easy — until you’re warm and lightly sweating',null],
+     ['Arm circles','10 each direction, small to big','arm circles warm up'],
+     ['Band pull-aparts','15 reps light — lightest reverse pec-deck if no band','band pull apart'],
+     ['Incline push-ups','10 slow reps, hands on a bench or bar','incline push up'],
+     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5 — then start the work sets',null]],
+ cd:[['Doorway chest stretch','Forearm on a rack upright, turn away','doorway chest stretch'],
+     ['Overhead triceps stretch','Elbow behind head, other hand pulls gently','overhead triceps stretch'],
+     ['Cross-body shoulder stretch','Arm across chest','cross body shoulder stretch'],
+     ['Child’s pose','30–45 s, slow breathing','child’s pose stretch']],
+ ex:[
  {n:'Barbell Bench Press',s:'4 × 6–10',r:'2–3 min',img:'Barbell_Bench_Press_-_Medium_Grip',q:'barbell bench press',
   cues:['Feet planted, slight arch, shoulder blades pinched back','Bar to mid-chest, press up and slightly back','Leave 1–2 reps in the tank on every set'],
   v:[['Smith machine bench press','Fixed bar path — no spotter needed','smith machine bench press','Smith_Machine_Bench_Press'],
@@ -234,7 +257,17 @@ const DATA=[
   v:[['Overhead cable extension','Face away from a low pulley with the rope','overhead cable tricep extension rope','Cable_Rope_Overhead_Triceps_Extension'],
      ['EZ-bar skullcrusher','Lying on a flat bench, bar to forehead','ez bar skull crusher','EZ-Bar_Skullcrusher']]}
 ]},
-{id:'tue',day:'Tue',cls:'pull',title:'Pull A',bias:'Width bias — lats · upper back · biceps · abs',ex:[
+{id:'tue',day:'Tue',cls:'pull',title:'Pull A',bias:'Width bias — lats · upper back · biceps · abs',
+ wu:[['Incline walk or rower','5 min easy',null],
+     ['Arm circles + shoulder rolls','10 each',null],
+     ['Scapular pulldowns','12 reps very light — arms straight, only shoulder blades move','scapular pulldown'],
+     ['Band pull-aparts','15 reps light','band pull apart'],
+     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5',null]],
+ cd:[['Dead hang lat stretch','20–30 s from the pull-up bar — or grab a high cable and lean back','dead hang lat stretch'],
+     ['Biceps wall stretch','Palm on wall behind you, turn away','biceps wall stretch'],
+     ['Upper-trap stretch','Ear to shoulder, hand adds light pressure','upper trap stretch'],
+     ['Child’s pose','30–45 s','child’s pose stretch']],
+ ex:[
  {n:'Lat Pulldown',s:'4 × 8–12',r:'2 min',img:'Wide-Grip_Lat_Pulldown',q:'lat pulldown',
   cues:['Grip a bit wider than shoulders','Pull the bar to your upper chest, elbows down-and-back','Full stretch at the top of every rep'],
   v:[['Assisted pull-up machine','Kneel on the pad; reduce assistance over the months','assisted pull up machine','Band_Assisted_Pull-Up'],
@@ -263,7 +296,17 @@ const DATA=[
   v:[['Ab crunch machine','Seated, pick your weight on the stack','ab crunch machine','Ab_Crunch_Machine'],
      ['Decline crunch','Hold a plate on your chest to progress','decline bench crunch','Decline_Crunch']]}
 ]},
-{id:'wed',day:'Wed',cls:'legs',title:'Legs A',bias:'Quad bias — quads · hamstrings · calves',ex:[
+{id:'wed',day:'Wed',cls:'legs',title:'Legs A',bias:'Quad bias — quads · hamstrings · calves',
+ wu:[['Bike or incline walk','5 min easy',null],
+     ['Leg swings','10 front-back + 10 sideways per leg, hold a rail','leg swings warm up'],
+     ['Bodyweight squats','15 slow, full depth','bodyweight squat'],
+     ['Glute bridges','12 reps, 1 s squeeze at top','glute bridge'],
+     ['Ramp sets on leg press','~50% × 10, then ~70% × 5',null]],
+ cd:[['Standing quad stretch','Heel to glute, knees together, hold a rail','standing quad stretch'],
+     ['Hamstring stretch','Heel on a bench, hinge forward flat-backed','standing hamstring stretch'],
+     ['Figure-4 glute stretch','Ankle over knee, sit back — standing or lying','figure 4 glute stretch'],
+     ['Calf stretch on a step','Heel drops below the step, knee straight','calf stretch step']],
+ ex:[
  {n:'Leg Press',s:'4 × 10–15',r:'2–3 min',img:'Leg_Press',q:'leg press machine',
   cues:['Feet mid-platform, shoulder width','Lower until thighs near your chest — never bounce','Don’t lock knees hard at the top'],
   v:[['Hack squat machine','More quad, more knee bend — go lighter','hack squat machine','Hack_Squat'],
@@ -287,7 +330,17 @@ const DATA=[
   v:[['Dead bug','Back-friendly floor alternative','dead bug exercise','Dead_Bug'],
      ['Farmer’s carry','Heavy DBs, walk 30–40 m tall — core + grip','farmers carry dumbbell','Farmers_Walk']]}
 ]},
-{id:'thu',day:'Thu',cls:'push',title:'Push B',bias:'Shoulder bias — shoulders · chest · triceps',ex:[
+{id:'thu',day:'Thu',cls:'push',title:'Push B',bias:'Shoulder bias — shoulders · chest · triceps',
+ wu:[['Incline walk or bike','5 min easy — until you’re warm and lightly sweating',null],
+     ['Arm circles','10 each direction, small to big','arm circles warm up'],
+     ['Band pull-aparts','15 reps light — lightest reverse pec-deck if no band','band pull apart'],
+     ['Incline push-ups','10 slow reps, hands on a bench or bar','incline push up'],
+     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5 — then start the work sets',null]],
+ cd:[['Doorway chest stretch','Forearm on a rack upright, turn away','doorway chest stretch'],
+     ['Overhead triceps stretch','Elbow behind head, other hand pulls gently','overhead triceps stretch'],
+     ['Cross-body shoulder stretch','Arm across chest','cross body shoulder stretch'],
+     ['Child’s pose','30–45 s, slow breathing','child’s pose stretch']],
+ ex:[
  {n:'Machine Shoulder Press',s:'4 × 8–12',r:'2 min',img:'Machine_Shoulder_Military_Press',q:'machine shoulder press',
   cues:['Adjust seat: handles start at ear height','Press up without shrugging your shoulders','Lead lift of the day — go for the logbook'],
   v:[['Seated dumbbell press','Monday’s lift, heavier day here','seated dumbbell shoulder press','Dumbbell_Shoulder_Press'],
@@ -316,7 +369,17 @@ const DATA=[
   v:[['Overhead rope extension','Second half — face away from the stack','overhead cable tricep extension rope','Cable_Rope_Overhead_Triceps_Extension'],
      ['EZ-bar skullcrusher','Swap for the overhead half','ez bar skull crusher','EZ-Bar_Skullcrusher']]}
 ]},
-{id:'fri',day:'Fri',cls:'pull',title:'Pull B',bias:'Thickness bias — mid-back · lats · rear delts · biceps · abs',ex:[
+{id:'fri',day:'Fri',cls:'pull',title:'Pull B',bias:'Thickness bias — mid-back · lats · rear delts · biceps · abs',
+ wu:[['Incline walk or rower','5 min easy',null],
+     ['Arm circles + shoulder rolls','10 each',null],
+     ['Scapular pulldowns','12 reps very light — arms straight, only shoulder blades move','scapular pulldown'],
+     ['Band pull-aparts','15 reps light','band pull apart'],
+     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5',null]],
+ cd:[['Dead hang lat stretch','20–30 s from the pull-up bar — or grab a high cable and lean back','dead hang lat stretch'],
+     ['Biceps wall stretch','Palm on wall behind you, turn away','biceps wall stretch'],
+     ['Upper-trap stretch','Ear to shoulder, hand adds light pressure','upper trap stretch'],
+     ['Child’s pose','30–45 s','child’s pose stretch']],
+ ex:[
  {n:'Chest-Supported Machine Row',s:'4 × 8–12',r:'2 min',img:'Leverage_Iso_Row',q:'chest supported machine row',
   cues:['Chest stays glued to the pad — zero momentum','Drive elbows back, squeeze the mid-back','Lead lift today: chase the logbook'],
   v:[['Lying T-bar row','Chest-pad T-bar version','chest supported t bar row','Lying_T-Bar_Row'],
@@ -345,7 +408,17 @@ const DATA=[
   v:[['Captain’s chair knee raise','Elbows on the pads — easier on grip','captains chair knee raise',null],
      ['Cable crunch','Tuesday’s move if grip is fried','kneeling cable crunch','Cable_Crunch']]}
 ]},
-{id:'sat',day:'Sat',cls:'legs',title:'Legs B',bias:'Hinge bias — hamstrings · glutes · calves',ex:[
+{id:'sat',day:'Sat',cls:'legs',title:'Legs B',bias:'Hinge bias — hamstrings · glutes · calves',
+ wu:[['Incline walk','5 min easy',null],
+     ['Leg swings','10 front-back + 10 sideways per leg','leg swings warm up'],
+     ['Glute bridges','15 reps, squeeze at top','glute bridge'],
+     ['Bodyweight good mornings','10 slow — rehearse the RDL hinge with hands on chest','bodyweight good morning'],
+     ['Ramp sets on RDL','empty bar × 10, then ~60% × 5',null]],
+ cd:[['Hamstring stretch','Heel on a bench, hinge forward','standing hamstring stretch'],
+     ['Half-kneeling hip-flexor stretch','Rear knee down, push hips forward, squeeze rear glute','half kneeling hip flexor stretch'],
+     ['Figure-4 glute stretch','Ankle over knee, sit back','figure 4 glute stretch'],
+     ['Calf stretch on a step','Heel drops, knee straight','calf stretch step']],
+ ex:[
  {n:'Romanian Deadlift',s:'4 × 8–12',r:'2–3 min',img:'Romanian_Deadlift',q:'barbell romanian deadlift',
   cues:['Push hips BACK, soft knees, bar sliding down the thighs','Stop when hamstrings pull tight (~mid-shin), stand by squeezing glutes','Flat back always — the week’s most technical lift'],
   v:[['Dumbbell RDL','Same hinge with DBs — learn it here first','dumbbell romanian deadlift','Stiff-Legged_Dumbbell_Deadlift'],
@@ -386,13 +459,14 @@ week.innerHTML=dayMeta.map(d=>`<a href="#${d.id}" style="--dc:var(--${d.cls==='r
 document.getElementById('nav').innerHTML=dayMeta.map(d=>`<a class="${d.cls}" href="#${d.id}">${d.day} · ${d.t}</a>`).join('');
 
 const pic=(id,i,cap)=>`<figure><img loading="lazy" src="images/${id}/${i}.jpg" alt="${cap} position"><figcaption>${cap}</figcaption></figure>`;
+const prep=(items,label)=>`<div class="prep"><h4 class="disp">${label}</h4>${items.map(it=>`<div class="prow"><b>${it[0]}</b><span class="pnote">${it[1]}</span>${it[2]?`<a class="vlink" href="${yt(it[2])}" target="_blank" rel="noopener">watch ↗</a>`:''}</div>`).join('')}</div>`;
 document.getElementById('days').innerHTML=DATA.map(d=>`
 <section class="day ${d.cls}" id="${d.id}">
   <div class="dayhead">
     <h2 class="disp">${d.day}day — ${d.title}</h2>
     <div class="bias">${d.bias}</div>
-    <div class="warm"><b>Warm-up:</b> 5 min brisk walk + 2 light ramp sets on lift 1</div>
   </div>
+  ${prep(d.wu,"WARM-UP · ~8 MIN — SKIPPING THIS IS WHY YOU COULDN’T GET UP")}
   ${d.ex.map((e,i)=>`
   <article class="ex">
     <div class="exhead">
@@ -413,6 +487,7 @@ document.getElementById('days').innerHTML=DATA.map(d=>`
     </div>
   </article>`).join('')}
   <div class="finisher"><b>Finisher:</b> 10–15 min incline treadmill walk — 4–6 % grade, 5.5–6 km/h. Then protein.</div>
+  ${prep(d.cd,"COOL-DOWN · ~5 MIN — HOLD 20–30 S EACH, BREATHE SLOW")}
 </section>`).join('');
 
 /* offline: register service worker, then warm the image cache in the background */
