@@ -317,39 +317,38 @@ const FOODS={
   swap:'—'}
 };
 
-/* ---------- WEEK MENU (updated for the 6-day PPL split) ---------- */
+/* ---------- WEEK MENU (matched to the 5-day split: Thu + Sun are rest) ---------- */
 const DAYS=[
- {id:'mon',day:'Mon',tag:'Gym PM · Push A',p:148,kcal:'~1,700',meals:[
+ {id:'mon',day:'Mon',tag:'Gym PM · Push',p:148,kcal:'~1,700',meals:[
   {t:'9 AM',n:'4-egg bhurji + 1 roti',p:27,k:420,d:'Pyaz, tamatar, hari mirch, dhania · ½ tsp butter',f:['bhurji','roti']},
   {t:'1 PM',n:'Lunch + bhindi sabzi',p:37,k:600,d:'2 roti · dal with 30 g soya · curd · salad',f:['roti','dal','bhindi','curd','salad']},
   {t:'5 PM',n:'Roasted chana 40 g + 1 banana',p:9,k:250,d:'Pre-gym fuel — never lift fasted',f:['chana','banana']},
   {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
   {t:'8:30 PM',n:'Chicken curry — 200 g breast + salad',p:45,k:380,d:'Dahi-pyaz-tamatar gravy, 1 tsp ghee tadka. Roti optional',f:['chicken_curry','salad']}]},
- {id:'tue',day:'Tue',tag:'Gym PM · Pull A',p:147,kcal:'~1,750',meals:[
+ {id:'tue',day:'Tue',tag:'Gym PM · Pull',p:147,kcal:'~1,750',meals:[
   {t:'9 AM',n:'Besan-moong chilla ×2 + 2 boiled eggs',p:26,k:400,d:'Green chutney · ½ tsp ghee on tawa',f:['chilla','boiled_eggs']},
   {t:'1 PM',n:'Lunch + gobi-matar sabzi',p:37,k:600,d:'2 roti · palak dal with 30 g soya · curd · salad',f:['roti','palak_dal','gobi_matar','curd','salad']},
   {t:'5 PM',n:'Peanuts 30 g + chaas 1 glass',p:9,k:220,d:'Pre-gym fuel',f:['peanuts','chaas']},
   {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
   {t:'8:30 PM',n:'Anda-paneer bhurji + 1 roti',p:40,k:520,d:'150 g paneer + 2 eggs · shimla mirch + pyaz in it',f:['paneer_bhurji','roti']}]},
- {id:'wed',day:'Wed',tag:'Gym PM · Legs A',p:146,kcal:'~1,650',meals:[
+ {id:'wed',day:'Wed',tag:'Gym PM · Legs (quad)',p:146,kcal:'~1,650',meals:[
   {t:'9 AM',n:'Anda chaat (4 boiled eggs)',p:25,k:310,d:'Chopped with pyaz, tamatar, chaat masala, nimbu',f:['boiled_eggs']},
   {t:'1 PM',n:'Lunch + lauki-chana dal',p:37,k:600,d:'2 roti · 30 g soya in the dal · curd · salad',f:['roti','lauki_dal','curd','salad']},
-  {t:'5 PM',n:'Moong sprouts chaat + ½ banana',p:11,k:230,d:'Pre-gym fuel for Legs A',f:['sprouts','banana']},
+  {t:'5 PM',n:'Moong sprouts chaat + ½ banana',p:11,k:230,d:'Pre-gym fuel for leg day',f:['sprouts','banana']},
   {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'Moved post-gym now that Wednesday is a lifting day',f:['whey']},
   {t:'8:30 PM',n:'Tandoori-style chicken — 200 g breast + big salad',p:46,k:360,d:'Dahi + tandoori masala marinade, pan-grilled, 1 tsp ghee',f:['tandoori_chicken','salad']}]},
- {id:'thu',day:'Thu',tag:'Gym PM · Push B',p:145,kcal:'~1,650',meals:[
-  {t:'9 AM',n:'4-egg masala omelette + 1 roti',p:27,k:420,d:'Pyaz, mirch, dhania · ½ tsp butter',f:['omelette','roti']},
+ {id:'thu',day:'Thu',tag:'REST DAY',p:145,kcal:'~1,650',meals:[
+  {t:'9 AM',n:'4-egg masala omelette + 1 roti + whey',p:53,k:550,d:'Pyaz, mirch, dhania · ½ tsp butter — rest-day whey goes with breakfast',f:['omelette','roti','whey']},
   {t:'1 PM',n:'Lunch + French beans–gajar sabzi',p:37,k:600,d:'2 roti · dal with 30 g soya · curd · salad',f:['roti','dal','beans_sabzi','curd','salad']},
-  {t:'5 PM',n:'Roasted chana 40 g + 1 banana',p:9,k:250,d:'Pre-gym fuel',f:['chana','banana']},
-  {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
+  {t:'5 PM',n:'Roasted chana 40 g + 1 banana',p:9,k:250,d:'No gym today — same food, same total. Get the 8–10k steps in instead',f:['chana','banana']},
   {t:'8:30 PM',n:'Soya chunk masala — 60 g dry + 150 g curd',p:38,k:380,d:'Pyaz-tamatar gravy, 1 tsp ghee · soak chunks, squeeze, then cook',f:['soya_masala','curd']}]},
- {id:'fri',day:'Fri',tag:'Gym PM · Pull B',p:146,kcal:'~1,700',meals:[
+ {id:'fri',day:'Fri',tag:'Gym PM · Upper Body',p:146,kcal:'~1,700',meals:[
   {t:'9 AM',n:'Moong-dal chilla ×2 + 1 egg + 150 g curd',p:25,k:400,d:'Egg beaten into the batter or fried on top',f:['moong_chilla','boiled_eggs','curd']},
   {t:'1 PM',n:'Lunch + karela sabzi',p:37,k:590,d:'2 roti · dal with 30 g soya · curd · salad · karela = blood-sugar bonus',f:['roti','dal','karela','curd','salad']},
   {t:'5 PM',n:'Peanuts 30 g + chaas',p:9,k:220,d:'Pre-gym fuel',f:['peanuts','chaas']},
   {t:'POST-GYM',n:'Whey in water',p:26,k:130,d:'',f:['whey']},
   {t:'8:30 PM',n:'Chicken curry — 200 g breast + salad',p:45,k:380,d:'Change the masala from Monday — kali mirch or achari style',f:['chicken_curry','salad']}]},
- {id:'sat',day:'Sat',tag:'Gym AM/PM · Legs B + CHEAT',p:120,kcal:'~2,300 cap',cheat:true,meals:[
+ {id:'sat',day:'Sat',tag:'Gym AM/PM · Lower Body + CHEAT',p:120,kcal:'~2,300 cap',cheat:true,meals:[
   {t:'9–10 AM',n:'4-egg bhurji + 1 roti + whey',p:53,k:550,d:'Normal breakfast — bank the protein before the fun. Whey after the workout if lifting in the morning',f:['bhurji','roti','whey']},
   {t:'1 PM',n:'Light home lunch + patta gobi sabzi',p:30,k:500,d:'1–2 roti · dal · curd — keep it lighter than usual',f:['roti','dal','patta_gobi','curd']},
   {t:'EVENING',n:'CHEAT MEAL — go out, eat what you love',p:35,k:1100,d:'Budget ~1,000–1,200 kcal · order rules below',f:[]}]},

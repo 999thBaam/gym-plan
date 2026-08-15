@@ -3,24 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>6-Day PPL</title>
-<meta name="description" content="6-day Push Pull Legs gym schedule with photos, form cues and every machine alternative per lift.">
+<title>5-Day Split</title>
+<meta name="description" content="5-day training split — push, pull, legs, upper, lower — with photos, form cues and every machine alternative per lift.">
 <meta name="theme-color" content="#15181B">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PPL">
+<meta name="apple-mobile-web-app-title" content="5-Day">
 <style>
 :root{
   --bg:#EFF1EE; --card:#FAFBF9; --ink:#1F2529; --mut:#5A646E; --line:#D7DCD7;
   --push:#C24E2C; --pull:#3B6BAF; --legs:#4A8757; --rest:#7E868E;
+  --upper:#8B4E96; --lower:#A5722A;
   --chipbg:#E4E8E3;
 }
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#15181B; --card:#1E2226; --ink:#E9ECE7; --mut:#9AA4AC; --line:#313940;
     --push:#E06A42; --pull:#6C9BD9; --legs:#6FAE7C; --rest:#8B949C;
+    --upper:#B478C0; --lower:#CE9A4B;
     --chipbg:#272C31;
   }
 }
@@ -83,6 +85,7 @@ nav.days a{
   background:var(--card); color:var(--mut); letter-spacing:.03em;
 }
 nav.days a.push{color:var(--push)} nav.days a.pull{color:var(--pull)} nav.days a.legs{color:var(--legs)}
+nav.days a.upper{color:var(--upper)} nav.days a.lower{color:var(--lower)}
 
 section.day{margin-top:34px; scroll-margin-top:64px}
 .dayhead{border-left:5px solid var(--dc); padding-left:12px; margin-bottom:14px}
@@ -160,7 +163,7 @@ section.day{margin-top:34px; scroll-margin-top:64px}
 
 .restcard{
   background:var(--card); border:1px solid var(--line); border-left:5px solid var(--rest);
-  border-radius:8px; padding:16px; margin-top:34px;
+  border-radius:8px; padding:16px; margin-top:34px; scroll-margin-top:64px;
 }
 .restcard h2{margin:0 0 4px; font-size:26px; color:var(--rest)}
 .restcard p{margin:4px 0; font-size:14.5px}
@@ -171,16 +174,18 @@ footer a{color:var(--mut)}
 section.day.push{--dc:var(--push)}
 section.day.pull{--dc:var(--pull)}
 section.day.legs{--dc:var(--legs)}
+section.day.upper{--dc:var(--upper)}
+section.day.lower{--dc:var(--lower)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="pagenav disp"><a class="on" href="index.html">🏋 Gym</a><a href="diet.html">🍽 Diet</a></div>
 <header class="top">
-  <h1 class="disp">6-Day Push Pull Legs</h1>
-  <p class="sub">Cut phase · July 2026 · tap any exercise name or <b>watch ↗</b> for a form video</p>
+  <h1 class="disp">5-Day Split</h1>
+  <p class="sub">Push · Pull · Legs · Upper · Lower — tap any exercise name or <b>watch ↗</b> for a form video</p>
   <div class="meta disp">
-    <span>Mon–Sat · Sun rest</span><span>75–90 min</span><span>8→12 double progression</span><span>Machine-friendly</span>
+    <span>Mon–Wed · Fri–Sat</span><span>Thu + Sun rest</span><span>70–90 min</span><span>8→12 double progression</span><span>Machine-friendly</span>
   </div>
   <div class="week disp" id="week"></div>
 </header>
@@ -192,20 +197,15 @@ section.day.legs{--dc:var(--legs)}
     <p>Every lift lists <strong>all the ways to do it</strong>, with photos. Any variant hits the same muscle — do it with the same sets × reps. Never wait in a queue.</p></div>
   <div class="rule"><h3 class="disp">Recovery valve (big calorie deficit)</h3>
     <p>If strength drops 2 weeks straight or sleep &lt; 6 h: cut every 4-set lift to 3 sets and skip the last exercise. Every 6th week = half volume. Sharp pain → stop that lift; soreness is fine.</p></div>
+  <div class="rule"><h3 class="disp">Why the rest days sit where they do</h3>
+    <p><strong>Thursday and Sunday are rest — not optional.</strong> Each muscle gets hit twice a week (Mon+Fri press, Tue+Fri pull, Wed+Sat legs) and the rest day is what makes the second hit worth doing. Miss a day? Push the week along, don’t stack two.</p></div>
   <div class="rule"><h3 class="disp">Daily frame</h3>
-    <p>Every day now lists its own warm-up and cool-down — do both, every session. Skipping them is the difference between normal soreness and can’t-get-up soreness.</p></div>
+    <p>Every day lists its own warm-up and cool-down — do both, every session. Skipping them is the difference between normal soreness and can’t-get-up soreness.</p></div>
 </div>
 
 <nav class="days" id="nav" aria-label="Jump to day"></nav>
 
 <main id="days"></main>
-
-<section class="restcard" id="sun">
-  <h2 class="disp">Sunday · Rest</h2>
-  <p>Full rest from lifting. Shopping + meal-prep day. Keep the 8–10k steps.</p>
-  <p>Optional: 20–30 min easy walk. Nothing harder — six lifting days only work if this one stays empty.</p>
-  <p>A gentle 10-min full-body stretch — or just repeating yesterday’s cool-down stretches — does more for DOMS than lying still.</p>
-</section>
 
 <footer>
   Photos: <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a> (public domain), bundled locally so the page works offline.
@@ -217,7 +217,7 @@ section.day.legs{--dc:var(--legs)}
 const yt=q=>`https://www.youtube.com/results?search_query=${encodeURIComponent(q+' form')}`;
 /* v = [name, note, youtubeQuery, imageFolder|null] */
 const DATA=[
-{id:'mon',day:'Mon',cls:'push',title:'Push A',bias:'Chest bias — chest · shoulders · triceps',
+{id:'mon',day:'Mon',cls:'push',title:'Push',bias:'Chest · shoulders · triceps',
  wu:[['Incline walk or bike','5 min easy — until you’re warm and lightly sweating',null],
      ['Arm circles','10 each direction, small to big','arm circles warm up'],
      ['Band pull-aparts','15 reps light — lightest reverse pec-deck if no band','band pull apart'],
@@ -228,36 +228,36 @@ const DATA=[
      ['Cross-body shoulder stretch','Arm across chest','cross body shoulder stretch'],
      ['Child’s pose','30–45 s, slow breathing','child’s pose stretch']],
  ex:[
- {n:'Barbell Bench Press',s:'4 × 6–10',r:'2–3 min',img:'Barbell_Bench_Press_-_Medium_Grip',q:'barbell bench press',
-  cues:['Feet planted, slight arch, shoulder blades pinched back','Bar to mid-chest, press up and slightly back','Leave 1–2 reps in the tank on every set'],
-  v:[['Smith machine bench press','Fixed bar path — no spotter needed','smith machine bench press','Smith_Machine_Bench_Press'],
-     ['Machine chest press','Seated, safest option; handles at mid-chest height','seated machine chest press','Machine_Bench_Press'],
-     ['Flat dumbbell press','More range of motion; kick the DBs up from your knees','flat dumbbell bench press','Dumbbell_Bench_Press']]},
- {n:'Seated Dumbbell Shoulder Press',s:'3 × 8–12',r:'~2 min',img:'Dumbbell_Shoulder_Press',q:'seated dumbbell shoulder press',
+ {n:'Incline Press',s:'4 × 6–10',r:'2–3 min',img:'Barbell_Incline_Bench_Press_-_Medium_Grip',q:'incline barbell bench press',
+  cues:['Incline goes FIRST today — upper chest is freshest now','30–45° bench, bar to upper chest, press up and slightly back','Leave 1–2 reps in the tank on every set'],
+  v:[['Smith incline press','Fixed path — safest solo near failure','smith machine incline press','Smith_Machine_Incline_Bench_Press'],
+     ['Incline dumbbell press','More range of motion; a free incline bench is almost always available','incline dumbbell press','Incline_Dumbbell_Press'],
+     ['Incline press machine','Pin-loaded, fastest to set up','incline chest press machine','Leverage_Incline_Chest_Press']]},
+ {n:'Flat Chest Press',s:'3 × 8–12',r:'2 min',img:'Barbell_Bench_Press_-_Medium_Grip',q:'barbell bench press',
+  cues:['Feet planted, slight arch, shoulder blades pinched back','Bar to mid-chest, elbows ~45° from the body','Lighter than an incline-second day — that’s the trade'],
+  v:[['Machine chest press','Seated, safest option; handles at mid-chest height','seated machine chest press','Machine_Bench_Press'],
+     ['Flat dumbbell press','Bigger stretch; kick the DBs up from your knees','flat dumbbell bench press','Dumbbell_Bench_Press'],
+     ['Smith machine bench press','Fixed bar path — no spotter needed','smith machine bench press','Smith_Machine_Bench_Press']]},
+ {n:'Shoulder Press',s:'3 × 8–12',r:'~2 min',img:'Dumbbell_Shoulder_Press',q:'seated dumbbell shoulder press',
   cues:['Bench upright, back against the pad','Start at ear height, press up — don’t clang the DBs','Ribs down, no lower-back arch'],
   v:[['Machine shoulder press','Easiest to load and progress; lines up the path for you','machine shoulder press','Machine_Shoulder_Military_Press'],
      ['Smith seated overhead press','Fixed path, sit on an upright bench under the bar','smith machine seated shoulder press','Smith_Machine_Overhead_Shoulder_Press'],
      ['Barbell overhead press','Hardest variant — strong days only','barbell overhead press','Barbell_Shoulder_Press']]},
- {n:'Incline Machine Press',s:'3 × 8–12',r:'~2 min',img:'Leverage_Incline_Chest_Press',q:'incline chest press machine',
-  cues:['Upper-chest focus — handles start at collarbone level','Press up and together, slow 2-second lowering','30–45° incline if using a bench'],
-  v:[['Incline dumbbell press','Set bench to 30°; a free incline bench is almost always available','incline dumbbell press','Incline_Dumbbell_Press'],
-     ['Smith incline press','Fixed path on an incline bench','smith machine incline press','Smith_Machine_Incline_Bench_Press'],
-     ['Incline barbell press','Classic; needs a spotter near failure','incline barbell bench press','Barbell_Incline_Bench_Press_-_Medium_Grip']]},
- {n:'Cable Lateral Raise',s:'3 × 12–15 / side',r:'~90 s',img:'Cable_Seated_Lateral_Raise',note:'Photo shows the seated version — standing is the same movement.',q:'cable lateral raise',
+ {n:'Lateral Raises',s:'3 × 12–15 / side',r:'~90 s',img:'Cable_Seated_Lateral_Raise',note:'Photo shows the seated version — standing is the same movement.',q:'cable lateral raise',
   cues:['Cable at lowest setting, stand side-on','Raise to shoulder height, lead with the elbow','Constant tension — no swinging'],
   v:[['Dumbbell lateral raise','Both arms at once; go light, strict','dumbbell lateral raise','Side_Lateral_Raise'],
      ['Lateral raise machine','Pads on elbows — zero cheating possible','lateral raise machine',null]]},
- {n:'Rope Triceps Pushdown',s:'3 × 10–15',r:'~90 s',img:'Triceps_Pushdown_-_Rope_Attachment',q:'rope triceps pushdown',
-  cues:['Elbows pinned to your sides the whole set','Push down and split the rope at the bottom','Only forearms move'],
+ {n:'Triceps Pushdown',s:'3 × 10–15',r:'~90 s',img:'Triceps_Pushdown_-_Rope_Attachment',q:'rope triceps pushdown',
+  cues:['Tricep exercise 1 of 2 — this one is the short-head/lateral hit','Elbows pinned to your sides the whole set','Push down and split the rope at the bottom'],
   v:[['Straight-bar pushdown','Same cable stack, slightly more weight possible','straight bar tricep pushdown','Triceps_Pushdown'],
      ['Dip machine','Seated dip press — big triceps + chest hit','dip machine triceps','Dip_Machine'],
      ['Single-arm cable pushdown','One arm at a time if the station is crowded','single arm cable tricep pushdown',null]]},
- {n:'Overhead Dumbbell Triceps Extension',s:'2 × 10–15',r:'~90 s',img:'Standing_Dumbbell_Triceps_Extension',q:'overhead dumbbell tricep extension',
-  cues:['One DB, both hands cupping the top plate','Lower behind your head to a stretch, press up','Elbows point forward, not flared'],
+ {n:'Overhead Triceps Extension',s:'3 × 10–15',r:'~90 s',img:'Standing_Dumbbell_Triceps_Extension',q:'overhead dumbbell tricep extension',
+  cues:['Tricep exercise 2 of 2 — overhead hits the long head the pushdown misses','One DB, both hands cupping the top plate','Lower behind your head to a stretch, elbows point forward'],
   v:[['Overhead cable extension','Face away from a low pulley with the rope','overhead cable tricep extension rope','Cable_Rope_Overhead_Triceps_Extension'],
      ['EZ-bar skullcrusher','Lying on a flat bench, bar to forehead','ez bar skull crusher','EZ-Bar_Skullcrusher']]}
 ]},
-{id:'tue',day:'Tue',cls:'pull',title:'Pull A',bias:'Width bias — lats · upper back · biceps · abs',
+{id:'tue',day:'Tue',cls:'pull',title:'Pull',bias:'Lats · mid-back · rear delts · biceps · abs',
  wu:[['Incline walk or rower','5 min easy',null],
      ['Arm circles + shoulder rolls','10 each',null],
      ['Scapular pulldowns','12 reps very light — arms straight, only shoulder blades move','scapular pulldown'],
@@ -268,27 +268,32 @@ const DATA=[
      ['Upper-trap stretch','Ear to shoulder, hand adds light pressure','upper trap stretch'],
      ['Child’s pose','30–45 s','child’s pose stretch']],
  ex:[
- {n:'Lat Pulldown',s:'4 × 8–12',r:'2 min',img:'Wide-Grip_Lat_Pulldown',q:'lat pulldown',
-  cues:['Grip a bit wider than shoulders','Pull the bar to your upper chest, elbows down-and-back','Full stretch at the top of every rep'],
+ {n:'Horizontal Pull 1 — Chest-Supported Row',s:'4 × 8–12',r:'2 min',img:'Leverage_Iso_Row',q:'chest supported machine row',
+  cues:['Chest stays glued to the pad — zero momentum','Drive elbows back, squeeze the mid-back for a second','Lead lift today: chase the logbook'],
+  v:[['Lying T-bar row','Chest-pad T-bar version','chest supported t bar row','Lying_T-Bar_Row'],
+     ['Incline dumbbell row','Chest down on a 30° bench, row both DBs','incline bench dumbbell row','Dumbbell_Incline_Row'],
+     ['T-bar row','Handle version; keep the lower back solid','t bar row','T-Bar_Row_with_Handle']]},
+ {n:'Horizontal Pull 2 — Seated Cable Row',s:'3 × 8–12',r:'2 min',img:'Seated_Cable_Rows',q:'seated cable row',
+  cues:['Second row of the day — different angle, not a repeat','Chest tall, pull the handle to your belly button','Don’t rock — small torso movement only'],
+  v:[['One-arm dumbbell row','Knee and hand on the bench, pull the DB to your hip','one arm dumbbell row','One-Arm_Dumbbell_Row'],
+     ['Barbell bent-over row','Free-weight version; keep it lighter and strict','barbell bent over row','Bent_Over_Barbell_Row'],
+     ['One-arm cable row','Low pulley, staggered stance','single arm cable row','Seated_One-arm_Cable_Pulley_Rows']]},
+ {n:'Vertical Pull — Lat Pulldown',s:'3 × 8–12',r:'2 min',img:'Wide-Grip_Lat_Pulldown',q:'lat pulldown',
+  cues:['Grip a bit wider than shoulders','Pull the bar to your upper chest, elbows down-and-back','Full stretch at the top of every rep — this is the width builder'],
   v:[['Assisted pull-up machine','Kneel on the pad; reduce assistance over the months','assisted pull up machine','Band_Assisted_Pull-Up'],
      ['Plate-loaded pulldown machine','Chest-pad version — very strict','plate loaded lat pulldown machine','Full_Range-Of-Motion_Lat_Pulldown'],
      ['Pull-ups','The goal by ~95 kg; machines are the smarter tool until then','pull up','Pullups']]},
- {n:'Seated Cable Row',s:'3 × 8–12',r:'2 min',img:'Seated_Cable_Rows',q:'seated cable row',
-  cues:['Chest tall, pull the handle to your belly button','Squeeze shoulder blades together for a second','Don’t rock — small torso movement only'],
-  v:[['Chest-supported machine row','Chest on the pad kills all momentum — great on tired days','chest supported machine row','Leverage_Iso_Row'],
-     ['T-bar row','Chest-pad version preferred; hinge version needs a solid lower back','t bar row','T-Bar_Row_with_Handle'],
-     ['Barbell bent-over row','Free-weight version; keep it lighter and strict','barbell bent over row','Bent_Over_Barbell_Row']]},
- {n:'Face Pull',s:'3 × 12–20',r:'~90 s',img:'Face_Pull',q:'cable face pull',
-  cues:['Rope at upper-chest/face height','Pull towards your eyes, elbows high and wide','Ends in a double-biceps pose; light weight'],
-  v:[['Reverse pec-deck','Sit facing the machine, sweep arms back','reverse pec deck rear delt','Reverse_Machine_Flyes'],
+ {n:'Rear Delt Fly',s:'3 × 12–20',r:'~90 s',img:'Reverse_Machine_Flyes',q:'reverse pec deck',
+  cues:['Face the pad, arms sweep back in an arc','Rear delts — small muscle, high reps, light weight','Pause briefly at the back of every rep'],
+  v:[['Face pull','Rope at face height, elbows high and wide','cable face pull','Face_Pull'],
      ['Bent-over rear-delt fly','Hinge over, raise light DBs out to the sides','bent over rear delt fly dumbbell','Reverse_Flyes']]},
- {n:'EZ-Bar Curl',s:'3 × 8–12',r:'~90 s',img:'EZ-Bar_Curl',q:'ez bar curl',
+ {n:'Bicep 1 — EZ-Bar Curl',s:'3 × 8–12',r:'~90 s',img:'EZ-Bar_Curl',q:'ez bar curl',
   cues:['Elbows glued to your sides','Curl up without swinging the hips','3-second lowering builds more than the lift'],
   v:[['Alternating dumbbell curl','Rotate palm up as you lift','alternating dumbbell curl','Dumbbell_Alternate_Bicep_Curl'],
      ['Cable curl','Constant tension, easy on the wrists','cable bicep curl','Standing_Biceps_Cable_Curl'],
      ['Machine preacher curl','Arms locked on the pad, zero cheating','machine preacher curl','Machine_Preacher_Curls']]},
- {n:'Hammer Curl',s:'2 × 10–15',r:'~90 s',img:'Hammer_Curls',q:'dumbbell hammer curl',
-  cues:['Palms facing each other the whole rep','Hits forearms + the muscle under the biceps','Both arms together or alternating'],
+ {n:'Bicep 2 — Hammer Curl',s:'3 × 10–15',r:'~90 s',img:'Hammer_Curls',q:'dumbbell hammer curl',
+  cues:['Palms facing each other the whole rep','Hits forearms + the muscle under the biceps that pushes it up','Both arms together or alternating'],
   v:[['Rope hammer curl','Rope on the low pulley, same neutral grip','cable rope hammer curl','Cable_Hammer_Curls_-_Rope_Attachment'],
      ['Cross-body hammer curl','Curl across to the opposite shoulder','cross body hammer curl','Cross_Body_Hammer_Curl']]},
  {n:'Cable Crunch',s:'3 × 10–15',r:'~90 s',img:'Cable_Crunch',q:'kneeling cable crunch',
@@ -296,174 +301,171 @@ const DATA=[
   v:[['Ab crunch machine','Seated, pick your weight on the stack','ab crunch machine','Ab_Crunch_Machine'],
      ['Decline crunch','Hold a plate on your chest to progress','decline bench crunch','Decline_Crunch']]}
 ]},
-{id:'wed',day:'Wed',cls:'legs',title:'Legs A',bias:'Quad bias — quads · hamstrings · calves',
+{id:'wed',day:'Wed',cls:'legs',title:'Legs',bias:'Quad bias — quads · hamstrings · calves',
  wu:[['Bike or incline walk','5 min easy',null],
      ['Leg swings','10 front-back + 10 sideways per leg, hold a rail','leg swings warm up'],
      ['Bodyweight squats','15 slow, full depth','bodyweight squat'],
      ['Glute bridges','12 reps, 1 s squeeze at top','glute bridge'],
-     ['Ramp sets on leg press','~50% × 10, then ~70% × 5',null]],
+     ['Ramp sets on the squat pattern','~50% × 10, then ~70% × 5',null]],
  cd:[['Standing quad stretch','Heel to glute, knees together, hold a rail','standing quad stretch'],
      ['Hamstring stretch','Heel on a bench, hinge forward flat-backed','standing hamstring stretch'],
      ['Figure-4 glute stretch','Ankle over knee, sit back — standing or lying','figure 4 glute stretch'],
      ['Calf stretch on a step','Heel drops below the step, knee straight','calf stretch step']],
  ex:[
- {n:'Leg Press',s:'4 × 10–15',r:'2–3 min',img:'Leg_Press',q:'leg press machine',
-  cues:['Feet mid-platform, shoulder width','Lower until thighs near your chest — never bounce','Don’t lock knees hard at the top'],
-  v:[['Hack squat machine','More quad, more knee bend — go lighter','hack squat machine','Hack_Squat'],
-     ['Smith machine squat','Feet slightly forward of the bar, controlled depth','smith machine squat','Smith_Machine_Squat'],
-     ['Goblet squat','One DB at your chest; great warm-up or fallback','goblet squat','Goblet_Squat']]},
- {n:'Leg Extension',s:'3 × 12–15',r:'~90 s',img:'Leg_Extensions',q:'leg extension machine',
+ {n:'Squat Pattern — Hack Squat',s:'4 × 8–12',r:'2–3 min',img:'Hack_Squat',q:'hack squat machine',
+  cues:['The squat of the week — most quad, most knee bend, safest to fail on','Feet mid-platform, shoulder width, control the way down','Don’t lock the knees hard at the top'],
+  v:[['Smith machine squat','Feet slightly forward of the bar, controlled depth','smith machine squat','Smith_Machine_Squat'],
+     ['Barbell back squat','Free-weight version — rack pins set, or skip it','barbell back squat',null],
+     ['Goblet squat','One DB at your chest; fine fallback on a busy floor','goblet squat','Goblet_Squat']]},
+ {n:'Leg Press',s:'3 × 10–15',r:'2 min',img:'Leg_Press',q:'leg press machine',
+  cues:['Second quad hit — higher reps than the hack squat','Feet mid-platform; lower until thighs near your chest, never bounce','Push through the whole foot, not the toes'],
+  v:[['Single-leg press','One leg at a time — evens out a strong side','single leg press machine',null],
+     ['Hack squat','Same pattern if the leg press is queued','hack squat machine','Hack_Squat'],
+     ['Goblet squat','Bodyweight-friendly fallback','goblet squat','Goblet_Squat']]},
+ {n:'Hip Hinge — Dumbbell RDL',s:'3 × 10–12',r:'2 min',img:'Stiff-Legged_Dumbbell_Deadlift',note:'Saturday’s barbell RDL is the heavy hinge. This one stays lighter — it’s here to keep hamstrings in the week, not to set a record.',q:'dumbbell romanian deadlift',
+  cues:['Push hips BACK, soft knees, DBs sliding down the thighs','Stop when hamstrings pull tight, stand by squeezing glutes','Flat back always'],
+  v:[['Barbell RDL','Saturday’s lift — use it here only if you go light','barbell romanian deadlift','Romanian_Deadlift'],
+     ['Smith machine RDL','Fixed path takes balance out of it','smith machine romanian deadlift','Smith_Machine_Stiff-Legged_Deadlift'],
+     ['45° back extension','Round-free hinge on the pad, squeeze glutes at the top','45 degree back extension glutes','Hyperextensions_Back_Extensions']]},
+ {n:'Leg Extensions',s:'3 × 12–15',r:'~90 s',img:'Leg_Extensions',q:'leg extension machine',
   cues:['Pad on the shins, knees lined up with the machine pivot','Pause 1 s at the top, squeeze the quads','Slow lowering — safest quad isolator there is'],
   v:[['Dumbbell split squat','Rear foot flat, most weight on the front leg','dumbbell split squat','Split_Squat_with_Dumbbells'],
      ['Walking lunges','Bodyweight first; add DBs later','walking lunge','Bodyweight_Walking_Lunge']]},
- {n:'Seated Leg Curl',s:'3 × 10–15',r:'~90 s',img:'Seated_Leg_Curl',q:'seated leg curl machine',
-  cues:['Thigh pad snug, curl heels under the seat','Full squeeze at the bottom, slow return','Seated version stretches hamstrings more than lying'],
+ {n:'Leg Curls',s:'3 × 10–15',r:'~90 s',img:'Seated_Leg_Curl',q:'seated leg curl machine',
+  cues:['Thigh pad snug, curl heels under the seat','Full squeeze at the bottom, slow return','Seated version stretches the hamstring more than lying'],
   v:[['Lying leg curl','Face-down version, same rules','lying leg curl machine','Lying_Leg_Curls'],
      ['Standing single-leg curl','One leg at a time if benches are taken','standing leg curl machine','Standing_Leg_Curl']]},
- {n:'Seated Calf Raise',s:'3 × 12–20',r:'~60 s',img:'Seated_Calf_Raise',q:'seated calf raise machine',
-  cues:['Full stretch at the bottom — pause 2 s there','Rise all the way onto the balls of your feet','Calves respond to the stretch, not the weight'],
+ {n:'Calf Raises',s:'3 × 12–20',r:'~60 s',img:'Seated_Calf_Raise',q:'seated calf raise machine',
+  cues:['Seated = bent knee = lower calf (Saturday’s standing version hits the upper)','Full stretch at the bottom — pause 2 s there','Calves respond to the stretch, not the weight'],
   v:[['Calf press on leg press','Toes on the bottom edge of the platform','calf press on leg press machine','Calf_Press_On_The_Leg_Press_Machine'],
      ['Smith standing calf raise','Bar on shoulders, toes on a plate or block','smith machine calf raise','Smith_Machine_Calf_Raise'],
-     ['Standing calf raise machine','Shoulder-pads version','standing calf raise machine','Standing_Calf_Raises']]},
- {n:'Plank',s:'3 × 30–45 s',r:'~60 s',img:'Plank',q:'plank proper form',
-  cues:['Forearms down, body one straight line','Squeeze glutes, don’t let hips sag','Stop the set when form breaks, not the timer'],
-  v:[['Dead bug','Back-friendly floor alternative','dead bug exercise','Dead_Bug'],
-     ['Farmer’s carry','Heavy DBs, walk 30–40 m tall — core + grip','farmers carry dumbbell','Farmers_Walk']]}
-]},
-{id:'thu',day:'Thu',cls:'push',title:'Push B',bias:'Shoulder bias — shoulders · chest · triceps',
- wu:[['Incline walk or bike','5 min easy — until you’re warm and lightly sweating',null],
-     ['Arm circles','10 each direction, small to big','arm circles warm up'],
+     ['Standing calf raise machine','Shoulder-pads version','standing calf raise machine','Standing_Calf_Raises']]}
+],
+ rest:{id:'thu',day:'Thursday',lines:[
+  'Full rest from lifting. Three days down, the two biggest still to come — Friday’s upper day is the longest session of the week.',
+  'Keep the 8–10k steps. Optional: 20–30 min easy walk. Nothing harder.',
+  'A 10-min stretch — or just repeat Wednesday’s cool-down — does more for leg DOMS than lying still.']}},
+{id:'fri',day:'Fri',cls:'upper',title:'Upper Body',short:'Upper',bias:'Second press + pull hit — chest · back · shoulders · arms',
+ wu:[['Incline walk or rower','5 min easy — until you’re warm and lightly sweating',null],
+     ['Arm circles + shoulder rolls','10 each direction',null],
      ['Band pull-aparts','15 reps light — lightest reverse pec-deck if no band','band pull apart'],
-     ['Incline push-ups','10 slow reps, hands on a bench or bar','incline push up'],
-     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5 — then start the work sets',null]],
+     ['Scapular pulldowns','12 reps very light — only shoulder blades move','scapular pulldown'],
+     ['Incline push-ups','10 slow reps','incline push up'],
+     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5',null]],
  cd:[['Doorway chest stretch','Forearm on a rack upright, turn away','doorway chest stretch'],
+     ['Dead hang lat stretch','20–30 s from the pull-up bar','dead hang lat stretch'],
      ['Overhead triceps stretch','Elbow behind head, other hand pulls gently','overhead triceps stretch'],
-     ['Cross-body shoulder stretch','Arm across chest','cross body shoulder stretch'],
+     ['Biceps wall stretch','Palm on wall behind you, turn away','biceps wall stretch'],
      ['Child’s pose','30–45 s, slow breathing','child’s pose stretch']],
  ex:[
- {n:'Machine Shoulder Press',s:'4 × 8–12',r:'2 min',img:'Machine_Shoulder_Military_Press',q:'machine shoulder press',
-  cues:['Adjust seat: handles start at ear height','Press up without shrugging your shoulders','Lead lift of the day — go for the logbook'],
-  v:[['Seated dumbbell press','Monday’s lift, heavier day here','seated dumbbell shoulder press','Dumbbell_Shoulder_Press'],
-     ['Smith seated overhead press','Fixed path under the bar','smith machine seated shoulder press','Smith_Machine_Overhead_Shoulder_Press'],
-     ['Barbell overhead press','Free-weight option on strong days','barbell overhead press','Barbell_Shoulder_Press']]},
- {n:'Incline Barbell Press',s:'3 × 8–12',r:'2 min',img:'Barbell_Incline_Bench_Press_-_Medium_Grip',q:'incline barbell bench press',
-  cues:['30–45° bench, bar to upper chest','Upper chest + front delts together','Stay 2 reps from failure without a spotter'],
-  v:[['Smith incline press','Safer solo near failure','smith machine incline press','Smith_Machine_Incline_Bench_Press'],
-     ['Incline dumbbell press','More stretch, always available','incline dumbbell press','Incline_Dumbbell_Press'],
-     ['Incline press machine','Pin-loaded, fastest to set up','incline chest press machine','Leverage_Incline_Chest_Press']]},
- {n:'Machine Chest Press',s:'3 × 8–12',r:'~2 min',img:'Machine_Bench_Press',q:'seated machine chest press',
-  cues:['Flat pressing after Monday’s barbell work','Handles at mid-chest, elbows ~45° from body','Squeeze the chest at lockout'],
-  v:[['Flat dumbbell press','Free-weight swap','flat dumbbell bench press','Dumbbell_Bench_Press'],
-     ['Dips (chest lean)','Lean forward — lower-chest emphasis; use the assist machine','chest dips','Dips_-_Chest_Version'],
-     ['Smith bench press','Fixed-path flat pressing','smith machine bench press','Smith_Machine_Bench_Press']]},
- {n:'Pec-Deck Fly',s:'3 × 12–15',r:'~90 s',img:'Butterfly',q:'pec deck fly machine',
-  cues:['Elbows slightly bent, sweep arms together','Feel the stretch at the back — don’t overreach','Squeeze 1 s when handles meet'],
-  v:[['Cable crossover / fly','Pulleys at chest height, step forward','cable crossover chest fly','Cable_Crossover'],
-     ['Flat dumbbell fly','Light DBs, big arc, flat bench','dumbbell chest fly','Dumbbell_Flyes']]},
- {n:'Dumbbell Lateral Raise',s:'3 × 12–20',r:'~90 s',img:'Side_Lateral_Raise',q:'dumbbell lateral raise',
-  cues:['Second lateral hit of the week — side delts grow on volume','Raise to shoulder height, tiny pause','Lighter than you think, stricter than you like'],
-  v:[['Cable lateral raise','Monday-style constant tension','cable lateral raise','Cable_Seated_Lateral_Raise'],
-     ['Lateral raise machine','Strictest version','lateral raise machine',null]]},
- {n:'Triceps Superset: Pushdown + Overhead',s:'2 × 12–15 each',r:'~90 s',img:'Triceps_Pushdown_-_Rope_Attachment',q:'tricep pushdown overhead extension superset',
-  cues:['Pushdown set, then straight into overhead extensions','Overhead hits the long head the pushdown misses','Done in under 10 minutes'],
-  v:[['Overhead rope extension','Second half — face away from the stack','overhead cable tricep extension rope','Cable_Rope_Overhead_Triceps_Extension'],
-     ['EZ-bar skullcrusher','Swap for the overhead half','ez bar skull crusher','EZ-Bar_Skullcrusher']]}
-]},
-{id:'fri',day:'Fri',cls:'pull',title:'Pull B',bias:'Thickness bias — mid-back · lats · rear delts · biceps · abs',
- wu:[['Incline walk or rower','5 min easy',null],
-     ['Arm circles + shoulder rolls','10 each',null],
-     ['Scapular pulldowns','12 reps very light — arms straight, only shoulder blades move','scapular pulldown'],
-     ['Band pull-aparts','15 reps light','band pull apart'],
-     ['Ramp sets on lift 1','~50% × 10, then ~70% × 5',null]],
- cd:[['Dead hang lat stretch','20–30 s from the pull-up bar — or grab a high cable and lean back','dead hang lat stretch'],
-     ['Biceps wall stretch','Palm on wall behind you, turn away','biceps wall stretch'],
-     ['Upper-trap stretch','Ear to shoulder, hand adds light pressure','upper trap stretch'],
-     ['Child’s pose','30–45 s','child’s pose stretch']],
- ex:[
- {n:'Chest-Supported Machine Row',s:'4 × 8–12',r:'2 min',img:'Leverage_Iso_Row',q:'chest supported machine row',
-  cues:['Chest stays glued to the pad — zero momentum','Drive elbows back, squeeze the mid-back','Lead lift today: chase the logbook'],
-  v:[['Lying T-bar row','Chest-pad T-bar version','chest supported t bar row','Lying_T-Bar_Row'],
-     ['Incline dumbbell row','Chest down on a 30° bench, row both DBs','incline bench dumbbell row','Dumbbell_Incline_Row'],
-     ['Seated cable row (wide grip)','Wide bar to hit the same mid-back area','wide grip seated cable row','Seated_Cable_Rows']]},
- {n:'Close-Grip Lat Pulldown',s:'3 × 8–12',r:'2 min',img:'Close-Grip_Front_Lat_Pulldown',q:'close grip lat pulldown',
-  cues:['Palms facing each other or underhand — shoulder-friendliest angle','Strongest pulling grip you have','Pull to the top of your chest'],
+ {n:'Flat Press',s:'4 × 8–12',r:'2 min',img:'Machine_Bench_Press',q:'seated machine chest press',
+  cues:['Machine here on purpose — 8 exercises today, save the setup time','Handles at mid-chest, elbows ~45° from the body','Squeeze the chest at lockout'],
+  v:[['Flat dumbbell press','Free-weight swap with a bigger stretch','flat dumbbell bench press','Dumbbell_Bench_Press'],
+     ['Smith bench press','Fixed-path flat pressing','smith machine bench press','Smith_Machine_Bench_Press'],
+     ['Dips (chest lean)','Lean forward — lower-chest emphasis; use the assist machine','chest dips','Dips_-_Chest_Version']]},
+ {n:'Incline Press',s:'3 × 8–12',r:'~2 min',img:'Incline_Dumbbell_Press',q:'incline dumbbell press',
+  cues:['Bench at 30°, DBs start at chest level','Press up and together, slow 2-second lowering','Lighter than Monday — this is the second hit, not a max-out'],
+  v:[['Incline press machine','Pin-loaded, fastest to set up','incline chest press machine','Leverage_Incline_Chest_Press'],
+     ['Smith incline press','Fixed path on an incline bench','smith machine incline press','Smith_Machine_Incline_Bench_Press'],
+     ['Incline barbell press','Monday’s lift — only if you’re fresh','incline barbell bench press','Barbell_Incline_Bench_Press_-_Medium_Grip']]},
+ {n:'Horizontal Pull',s:'3 × 8–12 / side',r:'~90 s',img:'One-Arm_Dumbbell_Row',q:'one arm dumbbell row',
+  cues:['Knee and hand on the bench, flat back','Pull the DB to your hip, not your armpit','Weak side first, match reps with the strong side'],
+  v:[['Chest-supported machine row','Tuesday’s lead lift, lighter today','chest supported machine row','Leverage_Iso_Row'],
+     ['Seated cable row','Fast to set up, easy to load','seated cable row','Seated_Cable_Rows'],
+     ['Iso-lateral machine row','One side at a time on the plate-loaded machine','iso lateral row machine','Leverage_High_Row']]},
+ {n:'Vertical Pull',s:'3 × 8–12',r:'~2 min',img:'Close-Grip_Front_Lat_Pulldown',q:'close grip lat pulldown',
+  cues:['Close/neutral grip — different angle from Tuesday’s wide pulldown','Strongest pulling grip you have','Pull to the top of your chest, full stretch at the top'],
   v:[['V-bar pulldown','Neutral V-handle on the same station','v bar pulldown','V-Bar_Pulldown'],
      ['Assisted chin-up','Underhand grip on the assist machine','assisted chin up machine','Chin-Up'],
      ['Band-assisted pull-up','If the assist machine is taken','band assisted pull up','Band_Assisted_Pull-Up']]},
- {n:'One-Arm Dumbbell Row',s:'3 × 8–12 / side',r:'~90 s',img:'One-Arm_Dumbbell_Row',q:'one arm dumbbell row',
-  cues:['Knee and hand on the bench, flat back','Pull the DB to your hip, not your armpit','Weak side first, match reps with the strong side'],
-  v:[['One-arm cable row','Low pulley, staggered stance','single arm cable row','Seated_One-arm_Cable_Pulley_Rows'],
-     ['Iso-lateral machine row','One side at a time on the plate-loaded machine','iso lateral row machine','Leverage_High_Row']]},
- {n:'Reverse Pec-Deck',s:'3 × 12–20',r:'~90 s',img:'Reverse_Machine_Flyes',q:'reverse pec deck',
-  cues:['Face the pad, arms sweep back in an arc','Rear delts — small muscle, high reps, light weight','Pause briefly at the back'],
-  v:[['Face pull','Tuesday’s move, same target','cable face pull','Face_Pull'],
-     ['Bent-over rear-delt fly','Hinge and sweep light DBs','bent over rear delt fly dumbbell','Reverse_Flyes']]},
- {n:'Preacher Curl',s:'3 × 8–12',r:'~90 s',img:'Preacher_Curl',q:'preacher curl',
-  cues:['Arms on the sloped pad, armpits at the top edge','Full stretch at the bottom without unlocking elbows','EZ-bar or machine — whichever is free'],
+ {n:'Shoulder Press',s:'3 × 8–12',r:'~90 s',img:'Machine_Shoulder_Military_Press',q:'machine shoulder press',
+  cues:['Adjust seat: handles start at ear height','Press up without shrugging your shoulders','Second shoulder press of the week — form over load'],
+  v:[['Seated dumbbell press','Monday’s lift','seated dumbbell shoulder press','Dumbbell_Shoulder_Press'],
+     ['Smith seated overhead press','Fixed path under the bar','smith machine seated shoulder press','Smith_Machine_Overhead_Shoulder_Press'],
+     ['Barbell overhead press','Free-weight option on strong days','barbell overhead press','Barbell_Shoulder_Press']]},
+ {n:'Lateral Raises',s:'3 × 12–20',r:'~90 s',img:'Side_Lateral_Raise',q:'dumbbell lateral raise',
+  cues:['Second lateral hit of the week — side delts grow on volume','Raise to shoulder height, tiny pause','Lighter than you think, stricter than you like'],
+  v:[['Cable lateral raise','Monday-style constant tension','cable lateral raise','Cable_Seated_Lateral_Raise'],
+     ['Lateral raise machine','Strictest version','lateral raise machine',null]]},
+ {n:'Bicep — Preacher Curl',s:'3 × 8–12',r:'~90 s',img:'Preacher_Curl',q:'preacher curl',
+  cues:['One bicep exercise today — Tuesday already did two','Arms on the sloped pad, armpits at the top edge','Full stretch at the bottom without unlocking the elbows'],
   v:[['Machine preacher curl','Pin-loaded version','machine preacher curl','Machine_Preacher_Curls'],
      ['Incline dumbbell curl','Lie back on a 45–60° bench, arms hang','incline dumbbell curl','Incline_Dumbbell_Curl'],
      ['Cable curl','Constant-tension fallback','cable bicep curl','Standing_Biceps_Cable_Curl']]},
- {n:'Hanging Knee Raise',s:'3 × 8–15',r:'~90 s',img:'Hanging_Leg_Raise',note:'Photo shows straight legs — bend your knees to make it easier; straighten them as you get stronger.',q:'hanging knee raise',
-  cues:['Hang from the pull-up bar or use the captain’s chair','Curl knees up to your chest, tilt the pelvis','No swinging between reps'],
-  v:[['Captain’s chair knee raise','Elbows on the pads — easier on grip','captains chair knee raise',null],
-     ['Cable crunch','Tuesday’s move if grip is fried','kneeling cable crunch','Cable_Crunch']]}
+ {n:'Tricep — EZ-Bar Skullcrusher',s:'3 × 10–15',r:'~90 s',img:'EZ-Bar_Skullcrusher',q:'ez bar skull crusher',
+  cues:['One tricep exercise today — Monday already did two','Lying flat, bar down to the forehead, elbows still','Last lift of the longest day: finish it, then walk'],
+  v:[['Overhead rope extension','Face away from the stack, rope behind the head','overhead cable tricep extension rope','Cable_Rope_Overhead_Triceps_Extension'],
+     ['Rope pushdown','Monday’s lift if elbows feel cranky','rope triceps pushdown','Triceps_Pushdown_-_Rope_Attachment'],
+     ['Dip machine','Seated dip press','dip machine triceps','Dip_Machine']]}
 ]},
-{id:'sat',day:'Sat',cls:'legs',title:'Legs B',bias:'Hinge bias — hamstrings · glutes · calves',
+{id:'sat',day:'Sat',cls:'lower',title:'Lower Body',short:'Lower',bias:'Hamstring bias — hamstrings · glutes · calves · abs',
  wu:[['Incline walk','5 min easy',null],
      ['Leg swings','10 front-back + 10 sideways per leg','leg swings warm up'],
      ['Glute bridges','15 reps, squeeze at top','glute bridge'],
      ['Bodyweight good mornings','10 slow — rehearse the RDL hinge with hands on chest','bodyweight good morning'],
-     ['Ramp sets on RDL','empty bar × 10, then ~60% × 5',null]],
+     ['Ramp sets on the RDL','empty bar × 10, then ~60% × 5',null]],
  cd:[['Hamstring stretch','Heel on a bench, hinge forward','standing hamstring stretch'],
      ['Half-kneeling hip-flexor stretch','Rear knee down, push hips forward, squeeze rear glute','half kneeling hip flexor stretch'],
      ['Figure-4 glute stretch','Ankle over knee, sit back','figure 4 glute stretch'],
      ['Calf stretch on a step','Heel drops, knee straight','calf stretch step']],
  ex:[
- {n:'Romanian Deadlift',s:'4 × 8–12',r:'2–3 min',img:'Romanian_Deadlift',q:'barbell romanian deadlift',
-  cues:['Push hips BACK, soft knees, bar sliding down the thighs','Stop when hamstrings pull tight (~mid-shin), stand by squeezing glutes','Flat back always — the week’s most technical lift'],
+ {n:'Hip Hinge — Romanian Deadlift',s:'4 × 8–12',r:'2–3 min',img:'Romanian_Deadlift',q:'barbell romanian deadlift',
+  cues:['The heavy hinge of the week — Wednesday’s DB version was the warm-up for this','Push hips BACK, soft knees, bar sliding down the thighs','Stop when hamstrings pull tight (~mid-shin), stand by squeezing glutes'],
   v:[['Dumbbell RDL','Same hinge with DBs — learn it here first','dumbbell romanian deadlift','Stiff-Legged_Dumbbell_Deadlift'],
      ['Smith machine RDL','Fixed path takes balance out of it','smith machine romanian deadlift','Smith_Machine_Stiff-Legged_Deadlift'],
-     ['45° back extension','Round-free hinge on the pad, squeeze glutes at the top','45 degree back extension glutes','Hyperextensions_Back_Extensions']]},
- {n:'Leg Press (feet high)',s:'3 × 12–15',r:'2 min',img:'Leg_Press',note:'Same machine as Wednesday — but place your feet HIGH on the platform.',q:'leg press feet high glutes hamstrings',
-  cues:['Feet HIGH on the platform, shoulder width','Shifts the work to glutes + hamstrings','Lighter than Wednesday — second squat pattern, not a repeat'],
-  v:[['Hack squat (feet high)','Same trick on the hack machine','hack squat feet high','Hack_Squat'],
-     ['Goblet squat','Fallback if the leg press is queued','goblet squat','Goblet_Squat'],
-     ['Smith squat (feet forward)','Feet ahead of the bar = more glutes','smith machine squat feet forward','Smith_Machine_Squat']]},
- {n:'Lying Leg Curl',s:'3 × 10–15',r:'~90 s',img:'Lying_Leg_Curls',q:'lying leg curl machine',
-  cues:['Face down, pad on the lower calves','Curl heels to glutes, hips stay pressed down','Second hamstring hit of the week — lighter, cleaner'],
-  v:[['Seated leg curl','Wednesday’s machine','seated leg curl machine','Seated_Leg_Curl'],
-     ['Standing single-leg curl','One leg at a time','standing leg curl machine','Standing_Leg_Curl']]},
- {n:'Hip Thrust',s:'3 × 8–12',r:'2 min',img:'Barbell_Hip_Thrust',q:'barbell hip thrust',
-  cues:['Upper back on a bench, bar or pad across your hips','Drive hips up until body is a flat table, chin tucked','Squeeze glutes 1–2 s at the top'],
-  v:[['Hip thrust machine','Dedicated machine if your gym has one — fastest setup','hip thrust machine',null],
-     ['Smith machine hip thrust','Fixed bar is easy to set up alone','smith machine hip thrust','Smith_Machine_Hip_Raise'],
-     ['Cable pull-through','Face away from a low pulley, rope between legs','cable pull through','Pull_Through'],
+     ['45° back extension','Round-free hinge on the pad if the lower back is cranky','45 degree back extension glutes','Hyperextensions_Back_Extensions']]},
+ {n:'Split Squat',s:'3 × 8–12 / side',r:'~2 min',img:'Split_Squat_with_Dumbbells',q:'dumbbell split squat',
+  cues:['Rear foot flat behind you, most of the weight on the front leg','Front shin fairly upright, knee tracks over the toes','Single-leg work — the strong side does not get to carry it'],
+  v:[['Rear-foot-elevated split squat','Back foot on a bench — harder version','bulgarian split squat',null],
+     ['Walking lunges','Bodyweight first; add DBs later','walking lunge','Bodyweight_Walking_Lunge'],
+     ['Smith split squat','Bar on the back, fixed path takes balance out','smith machine split squat','Smith_Machine_Squat']]},
+ {n:'Seated Hamstring Curl',s:'3 × 10–15',r:'~90 s',img:'Seated_Leg_Curl',q:'seated leg curl machine',
+  cues:['Seated on purpose — hips bent puts the hamstring on stretch','Curl heels under the seat, full squeeze at the bottom','Slow return, never let the stack slam'],
+  v:[['Lying leg curl','Face-down version, same rules','lying leg curl machine','Lying_Leg_Curls'],
+     ['Standing single-leg curl','One leg at a time if benches are taken','standing leg curl machine','Standing_Leg_Curl']]},
+ {n:'Leg Extensions',s:'3 × 12–15',r:'~90 s',img:'Leg_Extensions',q:'leg extension machine',
+  cues:['Keeps quads in the week on a hamstring day — lighter than Wednesday','Pause 1 s at the top, slow lowering','No quad day is complete without it; no hamstring day is ruined by it'],
+  v:[['Leg press','Wednesday’s machine, high reps and light','leg press machine','Leg_Press'],
+     ['Walking lunges','If the extension machine is queued','walking lunge','Bodyweight_Walking_Lunge']]},
+ {n:'Back Extensions',s:'3 × 10–15',r:'~90 s',img:'Hyperextensions_Back_Extensions',q:'45 degree back extension',
+  cues:['Hips at the top edge of the pad, hinge over, come up to a flat line','Squeeze the glutes at the top — don’t arch past straight','Hold a plate at your chest once bodyweight is easy'],
+  v:[['Barbell hip thrust','Upper back on a bench, drive hips to a flat table','barbell hip thrust','Barbell_Hip_Thrust'],
+     ['Cable pull-through','Face away from a low pulley, rope between the legs','cable pull through','Pull_Through'],
      ['Glute kickback','One leg at a time, cable or machine','glute kickback machine','Glute_Kickback']]},
- {n:'Standing Calf Raise',s:'3 × 12–20',r:'~60 s',img:'Standing_Calf_Raises',q:'standing calf raise',
+ {n:'Calf Raises',s:'3 × 12–20',r:'~60 s',img:'Standing_Calf_Raises',q:'standing calf raise',
   cues:['Straight knees = upper calf (Wednesday’s seated = lower calf)','2-second pause in the deep stretch','Full rise onto the toes every rep'],
   v:[['Calf press on leg press','Toes on the platform edge','calf press on leg press machine','Calf_Press_On_The_Leg_Press_Machine'],
      ['Smith calf raise','Bar on shoulders, toes on a block','smith machine calf raise','Smith_Machine_Calf_Raise'],
      ['Dumbbell calf raise','DB in one hand, other hand on a rail for balance','standing dumbbell calf raise','Standing_Dumbbell_Calf_Raise'],
      ['Seated calf raise','Wednesday’s machine as fallback','seated calf raise machine','Seated_Calf_Raise']]},
- {n:'Farmer’s Carry',s:'3 × 30–40 m',r:'~90 s',img:'Farmers_Walk',q:'farmers carry dumbbell',
-  cues:['Heaviest DBs you can hold with a tall chest','Walk slow and controlled — no leaning','Core, grip and traps to finish the week'],
-  v:[['Suitcase carry','One DB only — fights sideways lean, extra oblique work','suitcase carry dumbbell',null],
+ {n:'Hanging Knee Raise',s:'3 × 8–15',r:'~90 s',img:'Hanging_Leg_Raise',note:'Photo shows straight legs — bend your knees to make it easier; straighten them as you get stronger.',q:'hanging knee raise',
+  cues:['Hang from the pull-up bar or use the captain’s chair','Curl knees up to your chest, tilt the pelvis','No swinging between reps'],
+  v:[['Captain’s chair knee raise','Elbows on the pads — easier on grip','captains chair knee raise',null],
+     ['Cable crunch','Tuesday’s move if grip is fried','kneeling cable crunch','Cable_Crunch'],
      ['Plank','Swap in if the floor is crowded','plank proper form','Plank']]}
-]}
+],
+ rest:{id:'sun',day:'Sunday',lines:[
+  'Full rest from lifting. Shopping + meal-prep day. Keep the 8–10k steps.',
+  'Optional: 20–30 min easy walk. Nothing harder — five hard days only work if this one stays empty.',
+  'A gentle 10-min full-body stretch — or just repeating yesterday’s cool-down — does more for DOMS than lying still.']}}
 ];
-
 const week=document.getElementById('week');
-const dayMeta=[...DATA.map(d=>({id:d.id,day:d.day,cls:d.cls,t:d.title})),{id:'sun',day:'Sun',cls:'rest',t:'Rest'}];
+const dayMeta=DATA.flatMap(d=>{
+  const row=[{id:d.id,day:d.day,cls:d.cls,t:d.short||d.title}];
+  if(d.rest) row.push({id:d.rest.id,day:d.rest.day.slice(0,3),cls:'rest',t:'Rest'});
+  return row;
+});
 week.innerHTML=dayMeta.map(d=>`<a href="#${d.id}" style="--dc:var(--${d.cls==='rest'?'rest':d.cls})"><div class="d">${d.day}</div><div class="t">${d.t}</div></a>`).join('');
 
 document.getElementById('nav').innerHTML=dayMeta.map(d=>`<a class="${d.cls}" href="#${d.id}">${d.day} · ${d.t}</a>`).join('');
 
+const FULLDAY={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
 const pic=(id,i,cap)=>`<figure><img loading="lazy" src="images/${id}/${i}.jpg" alt="${cap} position"><figcaption>${cap}</figcaption></figure>`;
 const prep=(items,label)=>`<div class="prep"><h4 class="disp">${label}</h4>${items.map(it=>`<div class="prow"><b>${it[0]}</b><span class="pnote">${it[1]}</span>${it[2]?`<a class="vlink" href="${yt(it[2])}" target="_blank" rel="noopener">watch ↗</a>`:''}</div>`).join('')}</div>`;
 document.getElementById('days').innerHTML=DATA.map(d=>`
 <section class="day ${d.cls}" id="${d.id}">
   <div class="dayhead">
-    <h2 class="disp">${d.day}day — ${d.title}</h2>
+    <h2 class="disp">${FULLDAY[d.day]} — ${d.title}</h2>
     <div class="bias">${d.bias}</div>
   </div>
   ${prep(d.wu,"WARM-UP · ~8 MIN — SKIPPING THIS IS WHY YOU COULDN’T GET UP")}
@@ -488,7 +490,11 @@ document.getElementById('days').innerHTML=DATA.map(d=>`
   </article>`).join('')}
   <div class="finisher"><b>Finisher:</b> 10–15 min incline treadmill walk — 4–6 % grade, 5.5–6 km/h. Then protein.</div>
   ${prep(d.cd,"COOL-DOWN · ~5 MIN — HOLD 20–30 S EACH, BREATHE SLOW")}
-</section>`).join('');
+</section>
+${d.rest?`<section class="restcard" id="${d.rest.id}">
+  <h2 class="disp">${d.rest.day} · Rest</h2>
+  ${d.rest.lines.map(l=>`<p>${l}</p>`).join('')}
+</section>`:''}`).join('');
 
 /* offline: register service worker, then warm the image cache in the background */
 if('serviceWorker' in navigator){
