@@ -555,10 +555,16 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
 
 /* sw + offline warm-cache of all food photos */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(()=>{
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    reg.update();
     const urls=[...new Set(Object.values(FOODS).map(f=>`food/${f.img}.jpg`))];
     setTimeout(async()=>{ for(const u of urls){ try{ await fetch(u); }catch(e){ break; } } }, 3000);
   }).catch(()=>{});
+  /* a new service worker taking over means a new deploy — show it now, not next launch */
+  let swReloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(swReloading) return; swReloading=true; location.reload();
+  });
 }
 </script>
 </body>

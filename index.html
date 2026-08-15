@@ -498,12 +498,18 @@ ${d.rest?`<section class="restcard" id="${d.rest.id}">
 
 /* offline: register service worker, then warm the image cache in the background */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(()=>{
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    reg.update();
     const ids=new Set();
     DATA.forEach(d=>d.ex.forEach(e=>{ids.add(e.img); e.v.forEach(v=>{if(v[3])ids.add(v[3]);});}));
     const urls=[...ids].flatMap(id=>[`images/${id}/0.jpg`,`images/${id}/1.jpg`]);
     setTimeout(async()=>{ for(const u of urls){ try{ await fetch(u); }catch(e){ break; } } }, 3000);
   }).catch(()=>{});
+  /* a new service worker taking over means a new deploy — show it now, not next launch */
+  let swReloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(swReloading) return; swReloading=true; location.reload();
+  });
 }
 </script>
 </body>
